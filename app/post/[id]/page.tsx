@@ -6,7 +6,7 @@ import { CommentThread } from '@/components/CommentThread'
 import { RoleBadge } from '@/components/RoleBadge'
 import { ReplyForm } from './ReplyForm'
 import { formatRelativeTime } from '@/lib/utils'
-import type { UserRole, Comment as DBComment } from '@/lib/supabase/types'
+import type { UserRole, Comment as DBComment, Database } from '@/lib/supabase/types'
 
 interface PostPageProps {
   params: Promise<{ id: string }>
@@ -26,6 +26,8 @@ export default async function PostPage({ params }: PostPageProps) {
     .single()
 
   if (postError || !post) notFound()
+
+  const postTyped = post as unknown as Database['public']['Views']['public_posts']['Row']
 
   type RawComment = DBComment & {
     author: { display_name: string; role: UserRole; is_verified_expert: boolean } | null
@@ -54,9 +56,9 @@ export default async function PostPage({ params }: PostPageProps) {
     ghostAlias: c.ghost_alias?.alias_name ?? null,
   }))
 
-  const authorName = post.is_ghost_post
-    ? (post.alias_name ?? 'Anonymous')
-    : (post.display_name ?? 'Unknown')
+  const authorName = postTyped.is_ghost_post
+    ? (postTyped.alias_name ?? 'Anonymous')
+    : (postTyped.display_name ?? 'Unknown')
 
   return (
     <div className="min-h-screen bg-[var(--bg-page)]">
@@ -75,33 +77,33 @@ export default async function PostPage({ params }: PostPageProps) {
         {/* Post header */}
         <div className="px-6 pt-6 pb-4 bg-[var(--bg-surface)]">
           <h1 className="text-2xl font-bold text-[var(--earth)] font-serif leading-snug mb-3">
-            {post.title}
+              {postTyped.title}
           </h1>
           <div className="flex items-center gap-2 flex-wrap text-sm text-[var(--text-muted)] ui-sans">
-            {post.is_ghost_post ? (
-              <span className="flex items-center gap-1.5">
+            {postTyped.is_ghost_post ? (
+                <span className="flex items-center gap-1.5">
                 <Ghost className="h-3.5 w-3.5 text-[var(--ghost-accent)]" aria-hidden="true" />
                 <span className="text-[var(--ghost-accent)] font-medium">{authorName}</span>
                 <span className="text-xs bg-[var(--sand)] text-[var(--clay)] px-1.5 py-0.5 rounded-full">ghost</span>
               </span>
             ) : (
               <>
-                {post.role && (
-                  <RoleBadge role={post.role} isVerified={post.is_verified_expert ?? false} />
-                )}
+                  {postTyped.role && (
+                    <RoleBadge role={postTyped.role} isVerified={postTyped.is_verified_expert ?? false} />
+                  )}
                 <span>{authorName}</span>
               </>
             )}
-            {post.sub_village_name && (
+              {postTyped.sub_village_name && (
               <>
                 <span aria-hidden="true">·</span>
-                <span className="text-xs bg-[var(--sand)] text-[var(--clay)] px-2 py-0.5 rounded-full">
-                  {post.sub_village_name}
+                  <span className="text-xs bg-[var(--sand)] text-[var(--clay)] px-2 py-0.5 rounded-full">
+                    {postTyped.sub_village_name}
                 </span>
               </>
             )}
-            <time dateTime={post.created_at} className="ml-auto text-xs">
-              {formatRelativeTime(post.created_at)}
+              <time dateTime={postTyped.created_at} className="ml-auto text-xs">
+                {formatRelativeTime(postTyped.created_at)}
             </time>
           </div>
         </div>
@@ -109,13 +111,13 @@ export default async function PostPage({ params }: PostPageProps) {
         {/* Post body */}
         <article
           className="px-6 pb-6 bg-[var(--bg-surface)] border-b border-[var(--border)]"
-          aria-label={`Post: ${post.title}`}
+          aria-label={`Post: ${postTyped.title}`}
         >
           <p className="font-serif text-[var(--text-primary)] whitespace-pre-wrap leading-relaxed text-base">
-            {post.body}
+              {postTyped.body}
           </p>
           <div className="mt-4 flex gap-4 text-sm text-[var(--text-muted)] ui-sans">
-            <span>♥ {post.helpful_count} helpful</span>
+              <span>♥ {postTyped.helpful_count} helpful</span>
             <span>💬 {comments.length} {comments.length === 1 ? 'comment' : 'comments'}</span>
           </div>
         </article>

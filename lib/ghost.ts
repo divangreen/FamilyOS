@@ -21,7 +21,7 @@ export async function createGhostAlias(userId: string): Promise<string> {
 
     const { error } = await supabase
       .from('ghost_aliases')
-      .insert({ user_id: userId, alias_name: aliasName })
+      .insert({ user_id: userId, alias_name: aliasName } as any)
 
     if (!error) return aliasName
 

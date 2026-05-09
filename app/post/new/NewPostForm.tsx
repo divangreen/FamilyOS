@@ -60,7 +60,7 @@ export function NewPostForm({ userId, subVillages, defaultSubVillageId }: NewPos
         body: body.trim(),
         is_ghost_post: isGhost,
         ghost_alias_id: isGhost ? ghostAliasId : null,
-      })
+      } as any)
       .select('id')
       .single()
 
@@ -70,7 +70,7 @@ export function NewPostForm({ userId, subVillages, defaultSubVillageId }: NewPos
       return
     }
 
-    router.push(`/post/${data.id}`)
+    router.push(`/post/${(data as any).id}`)
     router.refresh()
   }
 

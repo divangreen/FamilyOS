@@ -38,7 +38,7 @@ export function NewPostForm({ userId, subVillages, defaultSubVillageId }: NewPos
         .order('created_at', { ascending: false })
         .limit(1)
         .single()
-      setGhostAliasId(data?.id ?? null)
+      setGhostAliasId((data as { id?: string } | null)?.id ?? null)
     }
   }
 

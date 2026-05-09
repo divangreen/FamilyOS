@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: [],
-  },
+  // moved from experimental.serverComponentsExternalPackages
+  serverExternalPackages: [],
 }
 
 export default nextConfig

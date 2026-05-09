@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import type { Database } from '@/lib/supabase/types'
 import { useRouter } from 'next/navigation'
 import { GhostToggle } from '@/components/GhostToggle'
 import { createClient } from '@/lib/supabase/client'
@@ -49,15 +50,17 @@ export function ReplyForm({ postId, userId, parentId }: ReplyFormProps) {
 
     const supabase = createClient()
 
-    const { error: insertError } = await supabase.from('comments').insert({
-      post_id: postId,
-      author_id: userId,
-      parent_id: parentId ?? null,
-      body: body.trim(),
-      depth: parentId ? 1 : 0,
-      is_ghost_post: isGhost,
-      ghost_alias_id: isGhost ? ghostAliasId : null,
-    })
+    const { error: insertError } = await supabase
+      .from('comments')
+      .insert({
+        post_id: postId,
+        author_id: userId,
+        parent_id: parentId ?? null,
+        body: body.trim(),
+        depth: parentId ? 1 : 0,
+        is_ghost_post: isGhost,
+        ghost_alias_id: isGhost ? ghostAliasId : null,
+      } as Database['public']['Tables']['comments']['Insert'])
 
     if (insertError) {
       setError(insertError.message)

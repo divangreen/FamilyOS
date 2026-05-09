@@ -18,7 +18,7 @@ export function formatRelativeTime(date: string | Date): string {
   if (diffMins < 60) return `${diffMins}m ago`
   if (diffHours < 24) return `${diffHours}h ago`
   if (diffDays < 7) return `${diffDays}d ago`
-  return target.toLocaleDateString()
+  return target.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 export function truncate(text: string, maxLength: number): string {

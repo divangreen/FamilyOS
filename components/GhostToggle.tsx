@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useId } from 'react'
+import { useState, useEffect } from 'react'
 import { Ghost } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -12,7 +12,6 @@ interface GhostToggleProps {
 }
 
 export function GhostToggle({ userId, checked, onChange, disabled = false }: GhostToggleProps) {
-  const id = useId()
   const [aliasName, setAliasName] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -51,48 +50,65 @@ export function GhostToggle({ userId, checked, onChange, disabled = false }: Gho
     return () => { cancelled = true }
   }, [checked, userId])
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    onChange(e.target.checked, aliasName)
+  function handleToggle() {
+    if (disabled || loading) return
+    onChange(!checked, aliasName)
   }
 
   return (
-    <div className="flex flex-col gap-1">
-      <label
-        htmlFor={id}
-        className="flex items-center gap-3 cursor-pointer select-none"
-      >
-        <input
-          id={id}
-          type="checkbox"
-          checked={checked}
-          onChange={handleChange}
-          disabled={disabled || loading}
+    <div aria-live="polite" aria-atomic="true">
+      {!checked ? (
+        /* Off state — subtle clickable row */
+        <div
+          role="checkbox"
+          aria-checked={false}
           aria-label="Post anonymously as a ghost"
+          tabIndex={0}
+          onClick={handleToggle}
+          onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); handleToggle() } }}
           className={cn(
-            'h-4 w-4 rounded border-gray-300 text-indigo-600',
-            'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500',
-            'disabled:opacity-50 disabled:cursor-not-allowed'
+            'flex items-center gap-2 cursor-pointer select-none',
+            'text-[var(--ghost-accent)] hover:opacity-80 transition-opacity ui-sans text-sm',
+            disabled && 'opacity-50 cursor-not-allowed'
           )}
-        />
-        <span className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
-          <Ghost className="h-4 w-4" aria-hidden="true" />
-          Post anonymously
-        </span>
-      </label>
-
-      {checked && (
-        <div className="ml-7 text-xs" aria-live="polite" aria-atomic="true">
-          {loading && (
-            <span className="text-gray-500 dark:text-gray-400">Generating alias…</span>
-          )}
-          {error && (
-            <span className="text-red-600 dark:text-red-400" role="alert">{error}</span>
-          )}
-          {aliasName && !loading && (
-            <span className="text-indigo-600 dark:text-indigo-400 font-medium">
-              You&apos;ll appear as <strong>{aliasName}</strong>
+        >
+          <Ghost className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <span>Post anonymously</span>
+        </div>
+      ) : (
+        /* On state — expanded plum callout card */
+        <div
+          className="bg-[var(--ghost-bg)] rounded-xl p-3 transition-all duration-200 cursor-pointer"
+          role="checkbox"
+          aria-checked={true}
+          aria-label="Ghost post enabled — click to disable"
+          tabIndex={0}
+          onClick={handleToggle}
+          onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); handleToggle() } }}
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <Ghost className="h-4 w-4 text-white shrink-0" aria-hidden="true" />
+            <span className="text-white text-sm ui-sans">Ghost posting on</span>
+            {/* Visual toggle indicator */}
+            <span className="ml-auto w-8 h-4 bg-[var(--ghost-accent)] rounded-full flex items-center justify-end pr-0.5">
+              <span className="w-3 h-3 bg-white rounded-full" />
             </span>
-          )}
+          </div>
+
+          <div className="text-xs ui-sans" aria-live="polite">
+            {loading && (
+              <span className="text-white/60">Generating your alias…</span>
+            )}
+            {error && (
+              <span className="text-red-300" role="alert">{error}</span>
+            )}
+            {aliasName && !loading && (
+              <span className="text-white/80">
+                You&apos;ll appear as{' '}
+                <strong className="text-[var(--lavender)] font-bold">{aliasName}</strong>
+              </span>
+            )}
+          </div>
         </div>
       )}
     </div>

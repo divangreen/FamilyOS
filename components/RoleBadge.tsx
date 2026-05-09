@@ -1,12 +1,17 @@
 import { cn } from '@/lib/utils'
 import type { UserRole } from '@/lib/supabase/types'
 
+/**
+ * Role badge colors follow the village warm-earth palette.
+ * Expert badges show a terracotta verified checkmark when isVerified is true.
+ */
 const ROLE_STYLES: Record<UserRole, { badge: string; label: string }> = {
-  mom:      { badge: 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200',     label: 'Mom' },
-  dad:      { badge: 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200',  label: 'Dad' },
-  guardian: { badge: 'bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-200', label: 'Guardian' },
-  expert:   { badge: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200',  label: 'Expert ✓' },
-  admin:    { badge: 'bg-rose-100 text-rose-800 dark:bg-rose-900 dark:text-rose-200',      label: 'Admin' },
+  mom:      { badge: 'bg-[#FDE8D8] text-[#8B4513]',  label: 'Mom' },
+  dad:      { badge: 'bg-[#E8F0FE] text-[#1A3A6C]',  label: 'Dad' },
+  guardian: { badge: 'bg-[#EDE8F5] text-[#3D1F5C]',  label: 'Guardian' },
+  // Expert badge — gold dot prefix indicates verified standing
+  expert:   { badge: 'bg-[#FFF3CD] text-[#7D4E00]',  label: 'Expert' },
+  admin:    { badge: 'bg-[#FDE8D8] text-[#8B4513]',  label: 'Admin' },
 }
 
 interface RoleBadgeProps {
@@ -17,18 +22,25 @@ interface RoleBadgeProps {
 
 export function RoleBadge({ role, isVerified, className }: RoleBadgeProps) {
   const { badge, label } = ROLE_STYLES[role]
-  const displayLabel = role === 'expert' && isVerified ? label : role === 'expert' ? 'Expert' : label
 
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
+        'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ui-sans',
         badge,
         className
       )}
-      aria-label={`Role: ${displayLabel}`}
+      aria-label={`Role: ${label}${role === 'expert' && isVerified ? ' (verified)' : ''}`}
     >
-      {displayLabel}
+      {/* Gold dot for verified experts */}
+      {role === 'expert' && isVerified && (
+        <span className="text-[var(--accent)]" aria-hidden="true">●</span>
+      )}
+      {label}
+      {/* Verified checkmark for expert */}
+      {role === 'expert' && isVerified && (
+        <span className="text-[var(--accent)] font-bold" aria-hidden="true">✓</span>
+      )}
     </span>
   )
 }

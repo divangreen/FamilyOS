@@ -1,22 +1,45 @@
 'use client'
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
+import { cn } from '@/lib/utils'
 import { type UserRole } from '@/lib/supabase/types'
 
 interface FeedFiltersProps {
   subVillages?: Array<{ id: string; name: string }>
 }
 
-const roles: UserRole[] = ['mom', 'dad', 'guardian', 'expert']
+const roleOptions: Array<{ label: string; value: string }> = [
+  { label: 'All',       value: 'all' },
+  { label: 'Moms',      value: 'mom' },
+  { label: 'Dads',      value: 'dad' },
+  { label: 'Guardians', value: 'guardian' },
+  { label: 'Experts',   value: 'expert' },
+]
+
+const sortOptions: Array<{ label: string; value: string }> = [
+  { label: 'Recent',       value: 'recent' },
+  { label: 'Most helpful', value: 'helpful' },
+  { label: 'Popular',      value: 'popular' },
+]
+
+/** Shared pill class builder — active pills use terracotta accent */
+function pillClass(isActive: boolean): string {
+  return cn(
+    'px-3 py-1 rounded-full text-xs border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]',
+    isActive
+      ? 'bg-[var(--accent)] border-[var(--accent)] text-white'
+      : 'bg-[var(--bg-surface)] border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--clay)]'
+  )
+}
 
 export function FeedFilters({ subVillages = [] }: FeedFiltersProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
-
   const pathname = usePathname()
-  const role = (searchParams.get('role') as UserRole | null) || 'all'
-  const sort = searchParams.get('sort') || 'recent'
-  const subVillage = searchParams.get('subVillage') || 'all'
+
+  const activeRole     = (searchParams.get('role') as UserRole | null) || 'all'
+  const activeSort     = searchParams.get('sort') || 'recent'
+  const activeVillage  = searchParams.get('subVillage') || 'all'
 
   const updateFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -25,65 +48,61 @@ export function FeedFilters({ subVillages = [] }: FeedFiltersProps) {
     } else {
       params.set(key, value)
     }
-    params.delete('page') // Reset pagination
+    params.delete('page') // Reset pagination on filter change
     router.push(`${pathname}?${params.toString()}`)
   }
 
   return (
-    <div className="flex flex-wrap gap-4 p-4 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10">
-      {/* Role Filter */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Role
-        </label>
-        <select
-          value={role}
-          onChange={(e) => updateFilter('role', e.target.value)}
-          className="px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm"
-        >
-          <option value="all">All</option>
-          {roles.map((r) => (
-            <option key={r} value={r}>
-              {r.charAt(0).toUpperCase() + r.slice(1)}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Sort Filter */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Sort
-        </label>
-        <select
-          value={sort}
-          onChange={(e) => updateFilter('sort', e.target.value)}
-          className="px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm"
-        >
-          <option value="recent">Recent</option>
-          <option value="helpful">Most Helpful</option>
-          <option value="popular">Popular</option>
-        </select>
-      </div>
-
-      {/* Sub-Village Filter */}
-      {subVillages.length > 0 && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Village
-          </label>
-          <select
-            value={subVillage}
-            onChange={(e) => updateFilter('subVillage', e.target.value)}
-            className="px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm"
+    <div className="ui-sans space-y-2 py-3">
+      {/* Role + Sort row */}
+      <div className="flex gap-2 flex-wrap items-center">
+        {/* Role pills */}
+        {roleOptions.map((r) => (
+          <button
+            key={r.value}
+            onClick={() => updateFilter('role', r.value)}
+            className={pillClass(activeRole === r.value)}
+            aria-pressed={activeRole === r.value}
           >
-            <option value="all">All Villages</option>
-            {subVillages.map((sv) => (
-              <option key={sv.id} value={sv.id}>
-                {sv.name}
-              </option>
-            ))}
-          </select>
+            {r.label}
+          </button>
+        ))}
+
+        {/* Sort pills pushed to the right */}
+        <div className="ml-auto flex gap-2">
+          {sortOptions.map((s) => (
+            <button
+              key={s.value}
+              onClick={() => updateFilter('sort', s.value)}
+              className={pillClass(activeSort === s.value)}
+              aria-pressed={activeSort === s.value}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Sub-village pills — shown only when sub-villages exist */}
+      {subVillages.length > 0 && (
+        <div className="flex gap-2 flex-wrap">
+          <button
+            onClick={() => updateFilter('subVillage', 'all')}
+            className={pillClass(activeVillage === 'all')}
+            aria-pressed={activeVillage === 'all'}
+          >
+            All Villages
+          </button>
+          {subVillages.map((sv) => (
+            <button
+              key={sv.id}
+              onClick={() => updateFilter('subVillage', sv.id)}
+              className={pillClass(activeVillage === sv.id)}
+              aria-pressed={activeVillage === sv.id}
+            >
+              {sv.name}
+            </button>
+          ))}
         </div>
       )}
     </div>

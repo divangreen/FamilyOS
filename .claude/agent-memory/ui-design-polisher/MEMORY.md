@@ -1,0 +1,2 @@
+- [Village Design System — Tokens & Strategy](project_design_system.md) — CSS variables, village color palette, typography conventions, role badge colors
+- [Village Component Visual Relationships](project_component_relationships.md) — which components share visual responsibility and must stay in sync

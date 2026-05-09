@@ -3,37 +3,16 @@
 import { type UserRole } from '@/lib/supabase/types'
 import { cn } from '@/lib/utils'
 
-const roleStyles: Record<UserRole, { border: string; bg: string; badge: string; text: string }> = {
-  mom: {
-    border: 'border-l-teal-400 dark:border-l-teal-500',
-    bg: 'bg-teal-50 dark:bg-teal-950/30',
-    badge: 'bg-teal-100 dark:bg-teal-900/50 text-teal-900 dark:text-teal-100',
-    text: 'text-teal-700 dark:text-teal-300',
-  },
-  dad: {
-    border: 'border-l-slate-400 dark:border-l-slate-500',
-    bg: 'bg-slate-50 dark:bg-slate-950/30',
-    badge: 'bg-slate-100 dark:bg-slate-900/50 text-slate-900 dark:text-slate-100',
-    text: 'text-slate-700 dark:text-slate-300',
-  },
-  guardian: {
-    border: 'border-l-violet-400 dark:border-l-violet-500',
-    bg: 'bg-violet-50 dark:bg-violet-950/30',
-    badge: 'bg-violet-100 dark:bg-violet-900/50 text-violet-900 dark:text-violet-100',
-    text: 'text-violet-700 dark:text-violet-300',
-  },
-  expert: {
-    border: 'border-l-amber-400 dark:border-l-amber-500',
-    bg: 'bg-amber-50 dark:bg-amber-950/30',
-    badge: 'bg-amber-100 dark:bg-amber-900/50 text-amber-900 dark:text-amber-100',
-    text: 'text-amber-700 dark:text-amber-300',
-  },
-  admin: {
-    border: 'border-l-rose-400 dark:border-l-rose-500',
-    bg: 'bg-rose-50 dark:bg-rose-950/30',
-    badge: 'bg-rose-100 dark:bg-rose-900/50 text-rose-900 dark:text-rose-100',
-    text: 'text-rose-700 dark:text-rose-300',
-  },
+/**
+ * Left-border accent colors follow the village role palette.
+ * Ghost comments get a dashed plum border and a faint ghost-bg tint.
+ */
+const roleStyles: Record<UserRole, { border: string; bg: string }> = {
+  mom:      { border: 'border-l-[#C1440E]',  bg: 'bg-[#FDE8D8]/10' },
+  dad:      { border: 'border-l-[#1A5276]',  bg: 'bg-[#E8F0FE]/10' },
+  guardian: { border: 'border-l-[#7C4CA0]',  bg: 'bg-[#EDE8F5]/10' },
+  expert:   { border: 'border-l-[#D4A017]',  bg: 'bg-[#FFF3CD]/10' },
+  admin:    { border: 'border-l-[#C1440E]',  bg: 'bg-[#FDE8D8]/10' },
 }
 
 interface CommentCardProps {
@@ -63,46 +42,72 @@ export function CommentCard({
   onHelpfulVote,
   children,
 }: CommentCardProps) {
-  const styles = roleStyles[author.role]
   const indentPx = Math.min(depth * 20, 100)
   const authorName = isGhost ? (ghostAlias || 'Ghost User') : author.displayName
 
+  const styles = isGhost
+    ? { border: 'border-l-[#7C4CA0] border-dashed', bg: 'bg-[var(--ghost-bg)]/5' }
+    : roleStyles[author.role]
+
   return (
     <article
-      className={cn('border-l-4', styles.border, styles.bg, 'p-4 mb-4')}
+      className={cn(
+        'border-l-4 p-4 mb-4 rounded-r-lg',
+        styles.border,
+        styles.bg
+      )}
       style={{ marginLeft: `${indentPx}px` }}
       aria-label={`Comment by ${authorName} with ${helpfulCount} helpful votes`}
     >
-      <div className="flex items-center gap-2 mb-2">
-        <div
-          className={cn(
-            'px-2 py-1 rounded text-sm font-medium',
-            styles.badge
-          )}
-        >
-          {author.role === 'expert' && author.isVerified ? '✓' : ''}
-          {author.role.charAt(0).toUpperCase() + author.role.slice(1)}
-        </div>
-        {isGhost && (
-          <span className={cn('text-xs', styles.text)}>· ghost post</span>
+      {/* Author row */}
+      <div className="flex items-center gap-2 mb-2 ui-sans">
+        {/* Role / ghost badge */}
+        {isGhost ? (
+          <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--ghost-pearl)] text-[var(--ghost-accent)] font-medium">
+            👻 ghost
+          </span>
+        ) : (
+          <span className={cn(
+            'text-xs px-2 py-0.5 rounded-full font-medium',
+            author.role === 'mom'      && 'bg-[#FDE8D8] text-[#8B4513]',
+            author.role === 'dad'      && 'bg-[#E8F0FE] text-[#1A3A6C]',
+            author.role === 'guardian' && 'bg-[#EDE8F5] text-[#3D1F5C]',
+            author.role === 'expert'   && 'bg-[#FFF3CD] text-[#7D4E00]',
+            author.role === 'admin'    && 'bg-[#FDE8D8] text-[#8B4513]',
+          )}>
+            {author.role === 'expert' && author.isVerified && (
+              <span className="text-[var(--accent)] mr-0.5">✓</span>
+            )}
+            {author.role.charAt(0).toUpperCase() + author.role.slice(1)}
+          </span>
         )}
-        <span className="text-xs text-gray-500 dark:text-gray-400 ml-auto">
-          {new Date(createdAt).toLocaleDateString()}
+
+        <span className="text-xs font-semibold text-[var(--text-primary)]">
+          {authorName}
         </span>
+
+        <time
+          dateTime={createdAt}
+          className="text-xs text-[var(--text-muted)] ml-auto"
+        >
+          {new Date(createdAt).toLocaleDateString()}
+        </time>
       </div>
 
-      <div className="mb-3">
-        <p className="font-semibold text-sm mb-1">{authorName}</p>
-        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{body}</p>
-      </div>
+      {/* Body */}
+      <p className="text-sm text-[var(--text-primary)] leading-relaxed font-serif mb-3">
+        {body}
+      </p>
 
-      <div className="flex items-center gap-4 text-xs">
+      {/* Footer actions */}
+      <div className="flex items-center gap-4 text-xs text-[var(--text-muted)] ui-sans">
         <button
           onClick={onHelpfulVote}
-          className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition"
+          className="flex items-center gap-1 hover:text-[var(--accent)] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] rounded"
           aria-label="Mark as helpful"
         >
-          👍 {helpfulCount}
+          <span aria-hidden="true">♡</span>
+          <span>{helpfulCount}</span>
         </button>
       </div>
 

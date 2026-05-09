@@ -36,23 +36,26 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-lg shadow-2xl p-8">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-center mb-2">
+    <div className="w-full max-w-md bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl p-8">
+      <h1
+        className="text-3xl font-bold text-[var(--earth)] text-center mb-2"
+        style={{ fontFamily: 'Georgia, serif' }}
+      >
         The Village
       </h1>
-      <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
-        High-anonymity parenting forum
+      <p className="text-center text-[var(--text-muted)] text-xs tracking-widest uppercase mb-6 ui-sans">
+        A space for parents
       </p>
 
       {error && (
-        <div className="mb-4 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-lg">
+        <div className="mb-4 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-lg" role="alert">
           <p className="text-red-900 dark:text-red-100 text-sm">{error}</p>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2 ui-sans">
             Email
           </label>
           <input
@@ -62,12 +65,12 @@ export default function LoginPage() {
             placeholder="you@example.com"
             required
             disabled={loading}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] disabled:opacity-50 ui-sans"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2 ui-sans">
             Password
           </label>
           <input
@@ -77,22 +80,22 @@ export default function LoginPage() {
             placeholder="••••••••"
             required
             disabled={loading}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] disabled:opacity-50 ui-sans"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium rounded-lg transition"
+          className="w-full px-4 py-2 bg-[var(--accent)] hover:bg-[var(--clay)] disabled:opacity-50 text-white font-medium rounded-lg transition ui-sans"
         >
           {loading ? 'Logging in...' : 'Login'}
         </button>
       </form>
 
-      <p className="text-center text-gray-600 dark:text-gray-400 mt-6">
-        Don't have an account?{' '}
-        <Link href="/signup" className="text-blue-600 dark:text-blue-400 hover:underline">
+      <p className="text-center text-[var(--text-muted)] mt-6 text-sm ui-sans">
+        Don&apos;t have an account?{' '}
+        <Link href="/signup" className="text-[var(--accent)] hover:underline">
           Sign up
         </Link>
       </p>

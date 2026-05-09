@@ -2,20 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Village design tokens — light mode */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-page:     #FAF3E8;
+  --bg-surface:  #ffffff;
+  --bg-raised:   #ffffff;
+  --text-primary:   #2C1810;
+  --text-secondary: #8B4513;
+  --text-muted:     #A0826D;
+  --border:      #E8C99A;
+  --accent:      #C1440E;
+  --accent-soft: #FDE8D8;
+  --ghost-bg:    #3D1F5C;
+  --ghost-accent: #7C4CA0;
+  --ghost-pearl: #EDE8F5;
+
+  /* Legacy tokens retained for backward compatibility */
+  --background: #FAF3E8;
+  --foreground: #2C1810;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Village design tokens — dark mode */
+.dark {
+  --bg-page:     #1C1208;
+  --bg-surface:  #241810;
+  --bg-raised:   #2E1E10;
+  --text-primary:   #FAF3E8;
+  --text-secondary: #C4926A;
+  --text-muted:     #8B6B50;
+  --border:      #3D2818;
+  --accent:      #E05A2B;
+  --accent-soft: #3D1808;
+  --ghost-bg:    #1A0F2E;
+  --ghost-accent: #5C3480;
+  --ghost-pearl: #2A1F3D;
+
+  /* Legacy tokens */
+  --background: #1C1208;
+  --foreground: #FAF3E8;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Georgia, 'Times New Roman', serif;
+  background: var(--bg-page);
+  color: var(--text-primary);
+}
+
+/* Utility class for UI chrome that stays sans-serif */
+.ui-sans {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }

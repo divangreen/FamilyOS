@@ -59,30 +59,30 @@ export default async function PostPage({ params }: PostPageProps) {
     : (post.display_name ?? 'Unknown')
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-[var(--bg-page)]">
       <div className="max-w-3xl mx-auto">
 
         {/* Nav */}
-        <div className="p-4 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+        <div className="p-4 bg-[var(--bg-surface)] border-b border-[var(--border)] ui-sans">
           <Link
             href="/feed"
-            className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500 rounded"
+            className="text-sm text-[var(--accent)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] rounded"
           >
             ← Back to feed
           </Link>
         </div>
 
         {/* Post header */}
-        <div className="px-6 pt-6 pb-4 bg-white dark:bg-gray-900">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+        <div className="px-6 pt-6 pb-4 bg-[var(--bg-surface)]">
+          <h1 className="text-2xl font-bold text-[var(--earth)] font-serif leading-snug mb-3">
             {post.title}
           </h1>
-          <div className="flex items-center gap-2 flex-wrap text-sm text-gray-600 dark:text-gray-400">
+          <div className="flex items-center gap-2 flex-wrap text-sm text-[var(--text-muted)] ui-sans">
             {post.is_ghost_post ? (
-              <span className="flex items-center gap-1">
-                <Ghost className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>{authorName}</span>
-                <span className="text-xs text-gray-400">· ghost post</span>
+              <span className="flex items-center gap-1.5">
+                <Ghost className="h-3.5 w-3.5 text-[var(--ghost-accent)]" aria-hidden="true" />
+                <span className="text-[var(--ghost-accent)] font-medium">{authorName}</span>
+                <span className="text-xs bg-[var(--sand)] text-[var(--clay)] px-1.5 py-0.5 rounded-full">ghost</span>
               </span>
             ) : (
               <>
@@ -95,7 +95,7 @@ export default async function PostPage({ params }: PostPageProps) {
             {post.sub_village_name && (
               <>
                 <span aria-hidden="true">·</span>
-                <span className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">
+                <span className="text-xs bg-[var(--sand)] text-[var(--clay)] px-2 py-0.5 rounded-full">
                   {post.sub_village_name}
                 </span>
               </>
@@ -108,14 +108,14 @@ export default async function PostPage({ params }: PostPageProps) {
 
         {/* Post body */}
         <article
-          className="px-6 pb-6 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800"
+          className="px-6 pb-6 bg-[var(--bg-surface)] border-b border-[var(--border)]"
           aria-label={`Post: ${post.title}`}
         >
-          <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap leading-relaxed">
+          <p className="font-serif text-[var(--text-primary)] whitespace-pre-wrap leading-relaxed text-base">
             {post.body}
           </p>
-          <div className="mt-4 flex gap-4 text-sm text-gray-500 dark:text-gray-400">
-            <span>👍 {post.helpful_count} helpful</span>
+          <div className="mt-4 flex gap-4 text-sm text-[var(--text-muted)] ui-sans">
+            <span>♥ {post.helpful_count} helpful</span>
             <span>💬 {comments.length} {comments.length === 1 ? 'comment' : 'comments'}</span>
           </div>
         </article>
@@ -126,7 +126,7 @@ export default async function PostPage({ params }: PostPageProps) {
           className="p-6"
           aria-label="Comments"
         >
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          <h2 className="text-lg font-semibold text-[var(--earth)] font-serif mb-4">
             Comments
           </h2>
           <CommentThread comments={comments} />
@@ -137,8 +137,8 @@ export default async function PostPage({ params }: PostPageProps) {
           {user ? (
             <ReplyForm postId={id} userId={user.id} />
           ) : (
-            <p className="text-sm text-center text-gray-500 dark:text-gray-400 py-4">
-              <Link href="/login" className="text-indigo-600 dark:text-indigo-400 hover:underline">
+            <p className="text-sm text-center text-[var(--text-muted)] py-4 ui-sans">
+              <Link href="/login" className="text-[var(--accent)] hover:underline">
                 Log in
               </Link>{' '}
               to leave a comment.

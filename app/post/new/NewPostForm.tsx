@@ -83,7 +83,7 @@ export function NewPostForm({ userId, subVillages, defaultSubVillageId }: NewPos
       <div>
         <label
           htmlFor="post-title"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+          className="block text-sm font-medium text-slate-700 mb-1.5 ui-sans"
         >
           Title
         </label>
@@ -96,15 +96,15 @@ export function NewPostForm({ userId, subVillages, defaultSubVillageId }: NewPos
           required
           maxLength={200}
           disabled={submitting}
-          className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500 disabled:opacity-50 text-sm"
+          className="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white text-slate-800 placeholder-slate-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 disabled:opacity-50 text-sm"
         />
-        <p className="mt-1 text-xs text-gray-400 text-right">{title.length}/200</p>
+        <p className="mt-1 text-xs text-slate-400 text-right ui-sans">{title.length}/200</p>
       </div>
 
       <div>
         <label
           htmlFor="post-body"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+          className="block text-sm font-medium text-slate-700 mb-1.5 ui-sans"
         >
           Body
         </label>
@@ -116,14 +116,14 @@ export function NewPostForm({ userId, subVillages, defaultSubVillageId }: NewPos
           required
           rows={8}
           disabled={submitting}
-          className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 resize-y focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500 disabled:opacity-50 text-sm"
+          className="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white text-slate-800 placeholder-slate-400 resize-y focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 disabled:opacity-50 text-sm"
         />
       </div>
 
       <div>
         <label
           htmlFor="post-subvillage"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+          className="block text-sm font-medium text-slate-700 mb-1.5 ui-sans"
         >
           Sub-Village
         </label>
@@ -132,7 +132,7 @@ export function NewPostForm({ userId, subVillages, defaultSubVillageId }: NewPos
           value={subVillageId}
           onChange={(e) => setSubVillageId(e.target.value)}
           disabled={submitting}
-          className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500 disabled:opacity-50 text-sm"
+          className="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white text-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 disabled:opacity-50 text-sm"
         >
           {subVillages.map((sv) => (
             <option key={sv.id} value={sv.id}>
@@ -150,7 +150,7 @@ export function NewPostForm({ userId, subVillages, defaultSubVillageId }: NewPos
       />
 
       {error && (
-        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+        <p className="text-sm text-red-600" role="alert">
           {error}
         </p>
       )}
@@ -159,7 +159,7 @@ export function NewPostForm({ userId, subVillages, defaultSubVillageId }: NewPos
         <button
           type="submit"
           disabled={submitting || !title.trim() || !body.trim()}
-          className="flex-1 px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+          className="flex-1 px-4 py-2.5 bg-emerald-800 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
         >
           {submitting ? 'Posting…' : 'Post to The Village'}
         </button>
@@ -167,7 +167,7 @@ export function NewPostForm({ userId, subVillages, defaultSubVillageId }: NewPos
           type="button"
           onClick={() => router.back()}
           disabled={submitting}
-          className="px-4 py-2.5 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+          className="px-4 py-2.5 border border-slate-200 text-slate-700 rounded-xl text-sm font-medium hover:bg-slate-50 disabled:opacity-50 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
         >
           Cancel
         </button>

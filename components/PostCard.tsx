@@ -21,23 +21,26 @@ function initials(name: string): string {
     .toUpperCase()
 }
 
-/** Avatar background color keyed by role — matches the role badge palette */
+/**
+ * Avatar background/text colors keyed by role.
+ * Kept as soft tints that harmonize with the slate/emerald palette.
+ */
 const avatarBg: Record<string, string> = {
-  mom:      'bg-[#FDE8D8]',
-  dad:      'bg-[#E8F0FE]',
-  guardian: 'bg-[#EDE8F5]',
-  expert:   'bg-[#FFF3CD]',
-  admin:    'bg-[#FDE8D8]',
-  ghost:    'bg-[var(--ghost-pearl)]',
+  mom:      'bg-rose-100',
+  dad:      'bg-sky-100',
+  guardian: 'bg-violet-100',
+  expert:   'bg-amber-50',
+  admin:    'bg-rose-100',
+  ghost:    'bg-violet-100',
 }
 
 const avatarText: Record<string, string> = {
-  mom:      'text-[#8B4513]',
-  dad:      'text-[#1A3A6C]',
-  guardian: 'text-[#3D1F5C]',
-  expert:   'text-[#7D4E00]',
-  admin:    'text-[#8B4513]',
-  ghost:    'text-[var(--ghost-accent)]',
+  mom:      'text-rose-700',
+  dad:      'text-sky-700',
+  guardian: 'text-violet-700',
+  expert:   'text-amber-800',
+  admin:    'text-rose-700',
+  ghost:    'text-violet-700',
 }
 
 export function PostCard({ post }: PostCardProps) {
@@ -82,14 +85,14 @@ export function PostCard({ post }: PostCardProps) {
   return (
     <article
       className={cn(
-        'bg-[var(--bg-surface)] rounded-xl transition-shadow hover:shadow-md',
-        // Ghost posts get a plum left accent border instead of the standard border
+        'bg-white rounded-2xl border transition-shadow hover:shadow-md',
+        // Ghost posts: violet left-accent border to signal anonymity
         post.is_ghost_post
-          ? 'border border-[var(--border)] border-l-4 border-l-[var(--ghost-accent)]'
+          ? 'border-slate-200 border-l-4 border-l-violet-400'
           : isExpert
-            // Expert/featured posts get a slightly heavier terracotta border
-            ? 'border border-[var(--accent)]'
-            : 'border border-[var(--border)]'
+            // Expert posts: emerald border to signal verified authority
+            ? 'border-emerald-200'
+            : 'border-slate-200'
       )}
     >
       <div className="p-4">
@@ -97,23 +100,23 @@ export function PostCard({ post }: PostCardProps) {
         <div className="flex items-start justify-between gap-3 mb-3">
           <Link
             href={`/post/${post.id}`}
-            className="flex-1 min-w-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] rounded"
+            className="flex-1 min-w-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 rounded"
           >
-            <h2 className="font-semibold text-lg text-[var(--text-primary)] font-serif break-words hover:text-[var(--accent)] transition-colors leading-snug">
+            <h2 className="font-semibold text-lg text-slate-900 font-serif break-words hover:text-emerald-800 transition-colors leading-snug">
               {post.title}
             </h2>
           </Link>
 
           {/* Sub-village tag */}
           {post.sub_village_name && (
-            <span className="bg-[var(--sand)] text-[var(--clay)] rounded-full text-xs px-2 py-0.5 whitespace-nowrap ui-sans shrink-0">
+            <span className="bg-slate-100 text-slate-600 rounded-full text-xs px-2 py-0.5 whitespace-nowrap ui-sans shrink-0">
               {post.sub_village_name}
             </span>
           )}
         </div>
 
         {/* Excerpt */}
-        <p className="text-sm text-[var(--text-secondary)] mb-4 line-clamp-2 font-serif leading-relaxed">
+        <p className="text-sm text-slate-700 mb-4 line-clamp-2 font-serif leading-relaxed">
           {truncate(post.body, 150)}
         </p>
 
@@ -131,13 +134,13 @@ export function PostCard({ post }: PostCardProps) {
             {post.is_ghost_post ? '👻' : initials(authorName)}
           </div>
 
-          <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] flex-1 min-w-0 ui-sans">
+          <div className="flex items-center gap-1.5 text-xs text-slate-500 flex-1 min-w-0 ui-sans">
             {post.is_ghost_post ? (
               <>
-                <Ghost className="h-3 w-3 shrink-0 text-[var(--ghost-accent)]" aria-hidden="true" />
-                <span className="font-medium text-[var(--ghost-accent)]">{authorName}</span>
+                <Ghost className="h-3 w-3 shrink-0 text-violet-600" aria-hidden="true" />
+                <span className="font-medium text-violet-700">{authorName}</span>
                 {/* Ghost role badge */}
-                <span className="bg-[var(--sand)] text-[var(--clay)] px-1.5 py-0.5 rounded-full text-xs">
+                <span className="bg-violet-50 text-violet-700 border border-violet-200 px-1.5 py-0.5 rounded-full text-xs">
                   ghost
                 </span>
               </>
@@ -153,7 +156,7 @@ export function PostCard({ post }: PostCardProps) {
 
           <time
             dateTime={post.created_at}
-            className="text-xs text-[var(--text-muted)] shrink-0 ui-sans"
+            className="text-xs text-slate-400 shrink-0 ui-sans"
           >
             {formatRelativeTime(post.created_at)}
           </time>
@@ -161,7 +164,7 @@ export function PostCard({ post }: PostCardProps) {
       </div>
 
       {/* Footer */}
-      <div className="flex gap-4 px-4 border-t border-[var(--border)] pt-3 pb-3 text-xs text-[var(--text-muted)] ui-sans">
+      <div className="flex gap-4 px-4 border-t border-slate-100 pt-3 pb-3 text-xs text-slate-500 ui-sans">
         {/* Heart vote button */}
         <button
           onClick={handleVote}
@@ -170,10 +173,10 @@ export function PostCard({ post }: PostCardProps) {
           aria-pressed={voted}
           className={cn(
             'flex items-center gap-1 rounded px-1.5 py-0.5 transition-colors',
-            'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]',
+            'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600',
             voted
-              ? 'text-[var(--accent)]'
-              : 'hover:text-[var(--accent)]',
+              ? 'text-emerald-800'
+              : 'hover:text-emerald-700',
             voting && 'opacity-50 cursor-not-allowed'
           )}
         >
@@ -186,7 +189,7 @@ export function PostCard({ post }: PostCardProps) {
 
         <Link
           href={`/post/${post.id}#comments`}
-          className="hover:text-[var(--accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] rounded flex items-center gap-1"
+          className="hover:text-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 rounded flex items-center gap-1"
           aria-label={`View comments on ${post.title}`}
         >
           💬 Reply

@@ -80,10 +80,10 @@ export function ReplyForm({ postId, userId, parentId }: ReplyFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-3 border border-gray-200 dark:border-gray-800 rounded-lg p-4 bg-white dark:bg-gray-900"
+      className="space-y-3 border border-slate-200 rounded-2xl p-4 bg-white"
       aria-label="Leave a comment"
     >
-      <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+      <h3 className="text-sm font-medium text-slate-700 ui-sans">
         {parentId ? 'Reply' : 'Leave a comment'}
       </h3>
 
@@ -95,7 +95,7 @@ export function ReplyForm({ postId, userId, parentId }: ReplyFormProps) {
         disabled={submitting}
         required
         aria-label="Comment text"
-        className="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm resize-y disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"
+        className="w-full rounded-xl border border-slate-200 bg-white text-slate-800 placeholder-slate-400 px-3 py-2 text-sm resize-y disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600"
       />
 
       <GhostToggle
@@ -106,7 +106,7 @@ export function ReplyForm({ postId, userId, parentId }: ReplyFormProps) {
       />
 
       {error && (
-        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+        <p className="text-sm text-red-600" role="alert">
           {error}
         </p>
       )}
@@ -114,7 +114,7 @@ export function ReplyForm({ postId, userId, parentId }: ReplyFormProps) {
       <button
         type="submit"
         disabled={submitting || !body.trim()}
-        className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+        className="px-4 py-2 bg-emerald-800 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
       >
         {submitting ? 'Posting…' : 'Post comment'}
       </button>

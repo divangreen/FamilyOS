@@ -1,17 +1,18 @@
 import { cn } from '@/lib/utils'
+import { ShieldCheck } from 'lucide-react'
 import type { UserRole } from '@/lib/supabase/types'
 
 /**
- * Role badge colors follow the village warm-earth palette.
- * Expert badges show a terracotta verified checkmark when isVerified is true.
+ * Role badge colors use soft tints from the new slate/emerald/amber palette.
+ * Expert badges show a ShieldCheck icon when isVerified is true (emerald accent).
  */
 const ROLE_STYLES: Record<UserRole, { badge: string; label: string }> = {
-  mom:      { badge: 'bg-[#FDE8D8] text-[#8B4513]',  label: 'Mom' },
-  dad:      { badge: 'bg-[#E8F0FE] text-[#1A3A6C]',  label: 'Dad' },
-  guardian: { badge: 'bg-[#EDE8F5] text-[#3D1F5C]',  label: 'Guardian' },
-  // Expert badge — gold dot prefix indicates verified standing
-  expert:   { badge: 'bg-[#FFF3CD] text-[#7D4E00]',  label: 'Expert' },
-  admin:    { badge: 'bg-[#FDE8D8] text-[#8B4513]',  label: 'Admin' },
+  mom:      { badge: 'bg-rose-50 text-rose-700 border border-rose-200',         label: 'Mom' },
+  dad:      { badge: 'bg-sky-50 text-sky-700 border border-sky-200',            label: 'Dad' },
+  guardian: { badge: 'bg-violet-50 text-violet-700 border border-violet-200',   label: 'Guardian' },
+  // Expert badge matches the expert flair on the landing page
+  expert:   { badge: 'bg-emerald-50 text-emerald-800 border border-emerald-200', label: 'Expert' },
+  admin:    { badge: 'bg-slate-100 text-slate-700 border border-slate-200',      label: 'Admin' },
 }
 
 interface RoleBadgeProps {
@@ -26,21 +27,17 @@ export function RoleBadge({ role, isVerified, className }: RoleBadgeProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ui-sans',
+        'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ui-sans',
         badge,
         className
       )}
       aria-label={`Role: ${label}${role === 'expert' && isVerified ? ' (verified)' : ''}`}
     >
-      {/* Gold dot for verified experts */}
+      {/* ShieldCheck icon for verified experts, matching landing page expert flair */}
       {role === 'expert' && isVerified && (
-        <span className="text-[var(--accent)]" aria-hidden="true">●</span>
+        <ShieldCheck className="h-3 w-3 shrink-0" aria-hidden="true" />
       )}
       {label}
-      {/* Verified checkmark for expert */}
-      {role === 'expert' && isVerified && (
-        <span className="text-[var(--accent)] font-bold" aria-hidden="true">✓</span>
-      )}
     </span>
   )
 }

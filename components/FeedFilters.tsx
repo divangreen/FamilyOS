@@ -22,13 +22,13 @@ const sortOptions: Array<{ label: string; value: string }> = [
   { label: 'Popular',      value: 'popular' },
 ]
 
-/** Shared pill class builder — active pills use terracotta accent */
+/** Shared pill class builder — active pills use emerald accent */
 function pillClass(isActive: boolean): string {
   return cn(
-    'px-3 py-1 rounded-full text-xs border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]',
+    'px-3 py-1 rounded-full text-xs border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600',
     isActive
-      ? 'bg-[var(--accent)] border-[var(--accent)] text-white'
-      : 'bg-[var(--bg-surface)] border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--clay)]'
+      ? 'bg-emerald-800 border-emerald-800 text-white'
+      : 'bg-white border-slate-200 text-slate-700 hover:border-emerald-600 hover:text-emerald-800'
   )
 }
 

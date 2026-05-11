@@ -15,20 +15,23 @@ export default async function NewPostPage() {
     .order('name')
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-slate-50">
       <div className="max-w-2xl mx-auto">
         {/* Nav */}
-        <div className="p-4 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+        <div className="p-4 bg-white border-b border-slate-200">
           <Link
             href="/feed"
-            className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500 rounded"
+            className="text-sm text-emerald-800 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 rounded"
           >
             ← Back to feed
           </Link>
         </div>
 
-        <div className="p-6 bg-white dark:bg-gray-900 m-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+        <div className="p-6 bg-white m-4 rounded-2xl shadow-sm border border-slate-200">
+          <h1
+            className="text-2xl font-bold text-slate-900 mb-6"
+            style={{ fontFamily: 'Georgia, serif' }}
+          >
             New Post
           </h1>
           <NewPostForm

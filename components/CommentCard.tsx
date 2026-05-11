@@ -1,18 +1,28 @@
 'use client'
 
 import { type UserRole } from '@/lib/supabase/types'
+import { ShieldCheck } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 /**
- * Left-border accent colors follow the village role palette.
- * Ghost comments get a dashed plum border and a faint ghost-bg tint.
+ * Left-border accent colors follow the new role palette.
+ * Ghost comments get a violet dashed border and faint violet tint.
  */
 const roleStyles: Record<UserRole, { border: string; bg: string }> = {
-  mom:      { border: 'border-l-[#C1440E]',  bg: 'bg-[#FDE8D8]/10' },
-  dad:      { border: 'border-l-[#1A5276]',  bg: 'bg-[#E8F0FE]/10' },
-  guardian: { border: 'border-l-[#7C4CA0]',  bg: 'bg-[#EDE8F5]/10' },
-  expert:   { border: 'border-l-[#D4A017]',  bg: 'bg-[#FFF3CD]/10' },
-  admin:    { border: 'border-l-[#C1440E]',  bg: 'bg-[#FDE8D8]/10' },
+  mom:      { border: 'border-l-rose-400',    bg: 'bg-rose-50/40' },
+  dad:      { border: 'border-l-sky-400',     bg: 'bg-sky-50/40' },
+  guardian: { border: 'border-l-violet-400',  bg: 'bg-violet-50/40' },
+  expert:   { border: 'border-l-emerald-500', bg: 'bg-emerald-50/40' },
+  admin:    { border: 'border-l-slate-400',   bg: 'bg-slate-50/60' },
+}
+
+/** Role badge chip inside comment — mirrors RoleBadge but inline */
+const roleBadgeStyles: Record<UserRole, string> = {
+  mom:      'bg-rose-50 text-rose-700 border border-rose-200',
+  dad:      'bg-sky-50 text-sky-700 border border-sky-200',
+  guardian: 'bg-violet-50 text-violet-700 border border-violet-200',
+  expert:   'bg-emerald-50 text-emerald-800 border border-emerald-200',
+  admin:    'bg-slate-100 text-slate-700 border border-slate-200',
 }
 
 interface CommentCardProps {
@@ -46,7 +56,7 @@ export function CommentCard({
   const authorName = isGhost ? (ghostAlias || 'Ghost User') : author.displayName
 
   const styles = isGhost
-    ? { border: 'border-l-[#7C4CA0] border-dashed', bg: 'bg-[var(--ghost-bg)]/5' }
+    ? { border: 'border-l-violet-400 border-dashed', bg: 'bg-violet-50/30' }
     : roleStyles[author.role]
 
   return (
@@ -63,47 +73,43 @@ export function CommentCard({
       <div className="flex items-center gap-2 mb-2 ui-sans">
         {/* Role / ghost badge */}
         {isGhost ? (
-          <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--ghost-pearl)] text-[var(--ghost-accent)] font-medium">
+          <span className="text-xs px-2.5 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200 font-semibold">
             👻 ghost
           </span>
         ) : (
           <span className={cn(
-            'text-xs px-2 py-0.5 rounded-full font-medium',
-            author.role === 'mom'      && 'bg-[#FDE8D8] text-[#8B4513]',
-            author.role === 'dad'      && 'bg-[#E8F0FE] text-[#1A3A6C]',
-            author.role === 'guardian' && 'bg-[#EDE8F5] text-[#3D1F5C]',
-            author.role === 'expert'   && 'bg-[#FFF3CD] text-[#7D4E00]',
-            author.role === 'admin'    && 'bg-[#FDE8D8] text-[#8B4513]',
+            'inline-flex items-center gap-1 text-xs px-2.5 py-0.5 rounded-full font-semibold',
+            roleBadgeStyles[author.role]
           )}>
             {author.role === 'expert' && author.isVerified && (
-              <span className="text-[var(--accent)] mr-0.5">✓</span>
+              <ShieldCheck className="h-3 w-3 shrink-0" aria-hidden="true" />
             )}
             {author.role.charAt(0).toUpperCase() + author.role.slice(1)}
           </span>
         )}
 
-        <span className="text-xs font-semibold text-[var(--text-primary)]">
+        <span className="text-xs font-semibold text-slate-900">
           {authorName}
         </span>
 
         <time
           dateTime={createdAt}
-          className="text-xs text-[var(--text-muted)] ml-auto"
+          className="text-xs text-slate-400 ml-auto"
         >
           {new Date(createdAt).toLocaleDateString()}
         </time>
       </div>
 
       {/* Body */}
-      <p className="text-sm text-[var(--text-primary)] leading-relaxed font-serif mb-3">
+      <p className="text-sm text-slate-800 leading-relaxed font-serif mb-3">
         {body}
       </p>
 
       {/* Footer actions */}
-      <div className="flex items-center gap-4 text-xs text-[var(--text-muted)] ui-sans">
+      <div className="flex items-center gap-4 text-xs text-slate-500 ui-sans">
         <button
           onClick={onHelpfulVote}
-          className="flex items-center gap-1 hover:text-[var(--accent)] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] rounded"
+          className="flex items-center gap-1 hover:text-emerald-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 rounded"
           aria-label="Mark as helpful"
         >
           <span aria-hidden="true">♡</span>

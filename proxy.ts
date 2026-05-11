@@ -1,7 +1,17 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-// Proxy shim: mirrors middleware.ts behavior but uses the new proxy entrypoint name.
+const PROTECTED_PREFIXES = [
+  '/feed',
+  '/profile',
+  '/villages',
+  '/post',
+  '/apply-expert',
+  '/verify',
+]
+
+const AUTH_PAGES = ['/login', '/signup']
+
 export default async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
@@ -14,9 +24,7 @@ export default async function proxy(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          )
+          // Stage cookies on the outgoing response (request.cookies is read-only)
           supabaseResponse = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
@@ -26,17 +34,17 @@ export default async function proxy(request: NextRequest) {
     }
   )
 
-  // Refresh session — required for Server Components to pick up auth state
+  // Always call getUser() to refresh the session token on every request
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
   const { pathname } = request.nextUrl
 
-  const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/signup')
-  const isProtectedPage = pathname.startsWith('/apply-expert')
+  const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+  const isAuthPage = AUTH_PAGES.some((page) => pathname.startsWith(page))
 
-  if (!user && isProtectedPage) {
+  if (!user && isProtected) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)

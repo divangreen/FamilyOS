@@ -61,63 +61,66 @@ export default async function PostPage({ params }: PostPageProps) {
     : (postTyped.display_name ?? 'Unknown')
 
   return (
-    <div className="min-h-screen bg-[var(--bg-page)]">
+    <div className="min-h-screen bg-slate-50">
       <div className="max-w-3xl mx-auto">
 
         {/* Nav */}
-        <div className="p-4 bg-[var(--bg-surface)] border-b border-[var(--border)] ui-sans">
+        <div className="p-4 bg-white border-b border-slate-200 ui-sans">
           <Link
             href="/feed"
-            className="text-sm text-[var(--accent)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] rounded"
+            className="text-sm text-emerald-800 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 rounded"
           >
             ← Back to feed
           </Link>
         </div>
 
         {/* Post header */}
-        <div className="px-6 pt-6 pb-4 bg-[var(--bg-surface)]">
-          <h1 className="text-2xl font-bold text-[var(--earth)] font-serif leading-snug mb-3">
-              {postTyped.title}
+        <div className="px-6 pt-6 pb-4 bg-white">
+          <h1
+            className="text-2xl font-bold text-slate-900 font-serif leading-snug mb-3"
+            style={{ fontFamily: 'Georgia, serif' }}
+          >
+            {postTyped.title}
           </h1>
-          <div className="flex items-center gap-2 flex-wrap text-sm text-[var(--text-muted)] ui-sans">
+          <div className="flex items-center gap-2 flex-wrap text-sm text-slate-500 ui-sans">
             {postTyped.is_ghost_post ? (
-                <span className="flex items-center gap-1.5">
-                <Ghost className="h-3.5 w-3.5 text-[var(--ghost-accent)]" aria-hidden="true" />
-                <span className="text-[var(--ghost-accent)] font-medium">{authorName}</span>
-                <span className="text-xs bg-[var(--sand)] text-[var(--clay)] px-1.5 py-0.5 rounded-full">ghost</span>
+              <span className="flex items-center gap-1.5">
+                <Ghost className="h-3.5 w-3.5 text-violet-600" aria-hidden="true" />
+                <span className="text-violet-700 font-medium">{authorName}</span>
+                <span className="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-1.5 py-0.5 rounded-full">ghost</span>
               </span>
             ) : (
               <>
-                  {postTyped.role && (
-                    <RoleBadge role={postTyped.role} isVerified={postTyped.is_verified_expert ?? false} />
-                  )}
+                {postTyped.role && (
+                  <RoleBadge role={postTyped.role} isVerified={postTyped.is_verified_expert ?? false} />
+                )}
                 <span>{authorName}</span>
               </>
             )}
-              {postTyped.sub_village_name && (
+            {postTyped.sub_village_name && (
               <>
                 <span aria-hidden="true">·</span>
-                  <span className="text-xs bg-[var(--sand)] text-[var(--clay)] px-2 py-0.5 rounded-full">
-                    {postTyped.sub_village_name}
+                <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
+                  {postTyped.sub_village_name}
                 </span>
               </>
             )}
-              <time dateTime={postTyped.created_at} className="ml-auto text-xs">
-                {formatRelativeTime(postTyped.created_at)}
+            <time dateTime={postTyped.created_at} className="ml-auto text-xs text-slate-400">
+              {formatRelativeTime(postTyped.created_at)}
             </time>
           </div>
         </div>
 
         {/* Post body */}
         <article
-          className="px-6 pb-6 bg-[var(--bg-surface)] border-b border-[var(--border)]"
+          className="px-6 pb-6 bg-white border-b border-slate-200"
           aria-label={`Post: ${postTyped.title}`}
         >
-          <p className="font-serif text-[var(--text-primary)] whitespace-pre-wrap leading-relaxed text-base">
-              {postTyped.body}
+          <p className="font-serif text-slate-800 whitespace-pre-wrap leading-relaxed text-base">
+            {postTyped.body}
           </p>
-          <div className="mt-4 flex gap-4 text-sm text-[var(--text-muted)] ui-sans">
-              <span>♥ {postTyped.helpful_count} helpful</span>
+          <div className="mt-4 flex gap-4 text-sm text-slate-500 ui-sans">
+            <span>♥ {postTyped.helpful_count} helpful</span>
             <span>💬 {comments.length} {comments.length === 1 ? 'comment' : 'comments'}</span>
           </div>
         </article>
@@ -128,7 +131,10 @@ export default async function PostPage({ params }: PostPageProps) {
           className="p-6"
           aria-label="Comments"
         >
-          <h2 className="text-lg font-semibold text-[var(--earth)] font-serif mb-4">
+          <h2
+            className="text-lg font-semibold text-slate-900 font-serif mb-4"
+            style={{ fontFamily: 'Georgia, serif' }}
+          >
             Comments
           </h2>
           <CommentThread comments={comments} />
@@ -139,8 +145,8 @@ export default async function PostPage({ params }: PostPageProps) {
           {user ? (
             <ReplyForm postId={id} userId={user.id} />
           ) : (
-            <p className="text-sm text-center text-[var(--text-muted)] py-4 ui-sans">
-              <Link href="/login" className="text-[var(--accent)] hover:underline">
+            <p className="text-sm text-center text-slate-500 py-4 ui-sans">
+              <Link href="/login" className="text-emerald-800 hover:underline">
                 Log in
               </Link>{' '}
               to leave a comment.

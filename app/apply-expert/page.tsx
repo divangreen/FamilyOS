@@ -4,9 +4,9 @@ import { ApplyExpertForm } from './ApplyExpertForm'
 import type { ApplicationStatus, ExpertApplication } from '@/lib/supabase/types'
 
 const STATUS_LABELS: Record<ApplicationStatus, { label: string; classes: string }> = {
-  pending:  { label: 'Under review',  classes: 'bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200' },
-  approved: { label: 'Approved',      classes: 'bg-green-50  dark:bg-green-950/30  border-green-200  dark:border-green-800  text-green-800  dark:text-green-200' },
-  rejected: { label: 'Not approved',  classes: 'bg-red-50    dark:bg-red-950/30    border-red-200    dark:border-red-800    text-red-800    dark:text-red-200' },
+  pending:  { label: 'Under review',  classes: 'bg-amber-50 border-amber-200 text-amber-800' },
+  approved: { label: 'Approved',      classes: 'bg-emerald-50 border-emerald-200 text-emerald-800' },
+  rejected: { label: 'Not approved',  classes: 'bg-red-50 border-red-200 text-red-800' },
 }
 
 export default async function ApplyExpertPage() {
@@ -27,20 +27,23 @@ export default async function ApplyExpertPage() {
   const locked = application?.status === 'pending' || application?.status === 'approved'
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <h1
+          className="text-2xl font-bold text-slate-900 mb-6"
+          style={{ fontFamily: 'Georgia, serif' }}
+        >
           Apply as Expert
         </h1>
 
         {/* Existing application status */}
         {application && (
           <div
-            className={`mb-6 p-4 border rounded-lg ${STATUS_LABELS[application.status].classes}`}
+            className={`mb-6 p-4 border rounded-xl ${STATUS_LABELS[application.status].classes}`}
             role="status"
             aria-live="polite"
           >
-            <p className="font-medium text-sm">
+            <p className="font-semibold text-sm">
               Status: {STATUS_LABELS[application.status].label}
             </p>
             <p className="text-xs mt-1 opacity-80">
@@ -60,7 +63,7 @@ export default async function ApplyExpertPage() {
         )}
 
         {locked ? (
-          <p className="text-sm text-gray-600 dark:text-gray-400 text-center py-4">
+          <p className="text-sm text-slate-600 text-center py-4 ui-sans">
             {application!.status === 'pending'
               ? 'Your application is currently under review. We will notify you once a decision is made.'
               : 'Your expert application has been approved. Welcome to the team!'}

@@ -60,19 +60,19 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
   const { data: posts, count, error } = await query
 
   return (
-    <div className="min-h-screen bg-[var(--bg-page)]">
+    <div className="min-h-screen bg-slate-50">
 
       {/* Sticky header */}
-      <header className="bg-[var(--bg-surface)] border-b border-[var(--border)] sticky top-0 z-20">
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-20">
         <div className="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
           <div>
             <h1
-              className="text-2xl font-bold text-[var(--earth)] leading-tight"
+              className="text-2xl font-bold text-slate-900 leading-tight"
               style={{ fontFamily: 'Georgia, serif' }}
             >
               The Village
             </h1>
-            <p className="text-[var(--clay)] text-xs tracking-widest uppercase ui-sans">
+            <p className="text-slate-500 text-xs tracking-widest uppercase ui-sans">
               A space for parents
             </p>
           </div>
@@ -82,13 +82,13 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
               <>
                 <Link
                   href="/apply-expert"
-                  className="px-3 py-1.5 border border-[var(--accent)] text-[var(--accent)] bg-transparent hover:bg-[var(--accent-soft)] rounded-lg transition text-sm ui-sans focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+                  className="px-3 py-1.5 border border-emerald-800 text-emerald-800 bg-transparent hover:bg-emerald-50 rounded-lg transition text-sm ui-sans focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600"
                 >
                   Apply as Expert
                 </Link>
                 <Link
                   href="/post/new"
-                  className="px-3 py-1.5 bg-[var(--accent)] text-white hover:bg-[var(--clay)] rounded-lg transition text-sm ui-sans focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+                  className="px-3 py-1.5 bg-emerald-800 text-white hover:bg-emerald-700 rounded-lg transition text-sm ui-sans focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600"
                 >
                   + New Post
                 </Link>
@@ -96,7 +96,7 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
             ) : (
               <Link
                 href="/login"
-                className="px-3 py-1.5 bg-[var(--accent)] text-white hover:bg-[var(--clay)] rounded-lg transition text-sm ui-sans focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+                className="px-3 py-1.5 bg-emerald-800 text-white hover:bg-emerald-700 rounded-lg transition text-sm ui-sans focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600"
               >
                 Login
               </Link>
@@ -115,35 +115,36 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
           {user && (
             <Link
               href="/post/new"
-              className="flex items-center gap-3 p-3 bg-[var(--bg-surface)] border border-[var(--accent)] rounded-xl mb-4 cursor-pointer hover:border-[var(--clay)] transition-colors group"
+              className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-xl mb-4 cursor-pointer hover:shadow-md transition-shadow group"
               aria-label="Create a new post"
             >
               {/* User avatar */}
-              <div className="w-8 h-8 rounded-full bg-[var(--accent)] flex items-center justify-center text-white text-xs font-bold ui-sans shrink-0">
+              <div className="w-8 h-8 rounded-full bg-emerald-800 flex items-center justify-center text-white text-xs font-bold ui-sans shrink-0">
                 {userInitials}
               </div>
-              <span className="text-[var(--text-muted)] text-sm flex-1 font-serif group-hover:text-[var(--text-secondary)] transition-colors">
+              <span className="text-slate-400 text-sm flex-1 font-serif group-hover:text-slate-600 transition-colors">
                 Share something with the village...
               </span>
-              <span className="text-xs text-[var(--ghost-accent)] bg-[var(--ghost-pearl)] px-2 py-1 rounded-full ui-sans shrink-0">
+              {/* Ghost post hint badge */}
+              <span className="text-xs text-violet-700 bg-violet-50 border border-violet-200 px-2 py-1 rounded-full ui-sans shrink-0">
                 ghost post
               </span>
             </Link>
           )}
 
           {/* Filters — wrapped in Suspense per CLAUDE.md requirement */}
-          <Suspense fallback={<div className="h-10 bg-[var(--accent-soft)] rounded-full animate-pulse mb-4" />}>
+          <Suspense fallback={<div className="h-10 bg-slate-100 rounded-full animate-pulse mb-4" />}>
             <FeedFilters subVillages={subVillages ?? []} />
           </Suspense>
 
           {/* Posts list */}
           <div className="space-y-4 mt-4">
             {error ? (
-              <div className="text-center py-12 text-red-600 dark:text-red-400 font-serif" role="alert">
+              <div className="text-center py-12 text-red-600 font-serif" role="alert">
                 Failed to load posts. Please try refreshing.
               </div>
             ) : !posts || posts.length === 0 ? (
-              <div className="text-center py-12 text-[var(--text-muted)] font-serif">
+              <div className="text-center py-12 text-slate-500 font-serif">
                 <p>No posts yet. Be the first to share with the village!</p>
               </div>
             ) : (
@@ -153,7 +154,7 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
                 ))}
 
                 {/* Pagination */}
-                <div className="flex justify-between items-center pt-4 text-sm text-[var(--text-muted)] ui-sans">
+                <div className="flex justify-between items-center pt-4 text-sm text-slate-500 ui-sans">
                   <span>
                     Showing {posts.length} of {count ?? 0} posts
                   </span>
@@ -161,7 +162,7 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
                     {page > 0 && (
                       <Link
                         href={`/feed?${new URLSearchParams({ ...Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined) as [string, string][]), page: String(page - 1) }).toString()}`}
-                        className="px-3 py-1 rounded-full border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--clay)] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+                        className="px-3 py-1 rounded-full border border-slate-200 text-slate-700 hover:border-emerald-600 hover:text-emerald-800 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600"
                       >
                         ← Prev
                       </Link>
@@ -169,7 +170,7 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
                     {posts.length === PAGE_SIZE && (
                       <Link
                         href={`/feed?${new URLSearchParams({ ...Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined) as [string, string][]), page: String(page + 1) }).toString()}`}
-                        className="px-3 py-1 rounded-full border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--clay)] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+                        className="px-3 py-1 rounded-full border border-slate-200 text-slate-700 hover:border-emerald-600 hover:text-emerald-800 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600"
                       >
                         Next →
                       </Link>

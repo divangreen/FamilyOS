@@ -51,10 +51,10 @@ export function ApplyExpertForm() {
   if (success) {
     return (
       <div
-        className="p-4 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900 rounded-lg text-center"
+        className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-center"
         role="status"
       >
-        <p className="text-green-800 dark:text-green-200 font-medium">
+        <p className="text-emerald-800 font-semibold text-sm">
           ✓ Application submitted! We&apos;ll review it shortly.
         </p>
       </div>
@@ -65,17 +65,17 @@ export function ApplyExpertForm() {
     <form onSubmit={handleSubmit} className="space-y-4" aria-label="Expert application form">
       {error && (
         <div
-          className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-lg"
+          className="p-3 bg-red-50 border border-red-200 rounded-xl"
           role="alert"
         >
-          <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+          <p className="text-sm text-red-800">{error}</p>
         </div>
       )}
 
       <div>
         <label
           htmlFor="specialty"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          className="block text-sm font-medium text-slate-700 mb-1 ui-sans"
         >
           Specialty / Area of Expertise
         </label>
@@ -87,17 +87,17 @@ export function ApplyExpertForm() {
           placeholder="e.g., Postpartum mental health"
           disabled={loading}
           required
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500"
+          className="w-full px-3 py-2.5 border border-slate-200 rounded-xl bg-white text-slate-800 placeholder-slate-400 text-sm disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600"
         />
       </div>
 
       <div>
         <label
           htmlFor="document"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          className="block text-sm font-medium text-slate-700 mb-1 ui-sans"
         >
           Supporting Document
-          <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">(PDF or image, max 10 MB)</span>
+          <span className="text-xs text-slate-400 ml-1">(PDF or image, max 10 MB)</span>
         </label>
         <input
           id="document"
@@ -107,9 +107,9 @@ export function ApplyExpertForm() {
           disabled={loading}
           required
           aria-describedby="document-hint"
-          className="w-full text-sm text-gray-700 dark:text-gray-300 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-amber-50 file:text-amber-700 dark:file:bg-amber-950/50 dark:file:text-amber-300 hover:file:bg-amber-100 disabled:opacity-50"
+          className="w-full text-sm text-slate-700 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-800 hover:file:bg-amber-100 disabled:opacity-50"
         />
-        <p id="document-hint" className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        <p id="document-hint" className="text-xs text-slate-400 mt-1 ui-sans">
           Credentials, certifications, or relevant documentation
         </p>
       </div>
@@ -117,12 +117,12 @@ export function ApplyExpertForm() {
       <button
         type="submit"
         disabled={loading || !specialty.trim() || !document}
-        className="w-full px-4 py-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
+        className="w-full px-4 py-2.5 bg-emerald-800 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
       >
         {loading ? 'Submitting…' : 'Submit Application'}
       </button>
 
-      <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+      <p className="text-xs text-slate-400 text-center ui-sans">
         Applications are reviewed by our admin team within 3–5 business days.
       </p>
     </form>

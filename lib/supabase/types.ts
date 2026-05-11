@@ -2,6 +2,12 @@ export type UserRole = 'mom' | 'dad' | 'guardian' | 'expert' | 'admin'
 export type VoteType = 'helpful' | 'popular'
 export type TargetType = 'post' | 'comment'
 export type ApplicationStatus = 'pending' | 'approved' | 'rejected'
+export type NotificationType =
+  | 'reply_post'
+  | 'reply_comment'
+  | 'helpful_vote'
+  | 'expert_approved'
+  | 'expert_rejected'
 
 export type Database = {
   public: {
@@ -216,6 +222,47 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          id: string
+          recipient_id: string
+          actor_id: string | null
+          type: NotificationType
+          target_id: string
+          target_type: TargetType
+          read_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string | undefined
+          recipient_id: string
+          actor_id?: string | null | undefined
+          type: NotificationType
+          target_id: string
+          target_type: TargetType
+          read_at?: string | null | undefined
+          created_at?: string | undefined
+        }
+        Update: {
+          id?: string | undefined
+          recipient_id?: string | undefined
+          actor_id?: string | null | undefined
+          type?: NotificationType | undefined
+          target_id?: string | undefined
+          target_type?: TargetType | undefined
+          read_at?: string | null | undefined
+          created_at?: string | undefined
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'notifications_recipient_id_fkey'
+            columns: ['recipient_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       expert_applications: {
         Row: {
           id: string
@@ -305,6 +352,7 @@ export type Database = {
       vote_type: VoteType
       target_type: TargetType
       application_status: ApplicationStatus
+      notification_type: NotificationType
     }
     CompositeTypes: {
       [_ in never]: never
@@ -317,3 +365,5 @@ export type Comment = Database['public']['Tables']['comments']['Row']
 export type User = Database['public']['Tables']['users']['Row']
 export type SubVillage = Database['public']['Tables']['sub_villages']['Row']
 export type ExpertApplication = Database['public']['Tables']['expert_applications']['Row']
+export type Vote = Database['public']['Tables']['reputation_votes']['Row']
+export type Notification = Database['public']['Tables']['notifications']['Row']

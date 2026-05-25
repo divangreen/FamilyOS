@@ -25,8 +25,9 @@ export async function POST(req: NextRequest) {
 
   // Rate limit
   const today = new Date().toISOString().split('T')[0]
-  const { data: usage } = await supabase
-    .from('ai_usage' as never)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: usage } = await (supabase as any)
+    .from('ai_usage')
     .select('count')
     .match({ user_id: user.id, feature: 'coach', used_at: today })
     .maybeSingle()
@@ -47,8 +48,9 @@ export async function POST(req: NextRequest) {
   let sessionDbId = session_id
 
   if (session_id) {
-    const { data: session } = await supabase
-      .from('coach_sessions' as never)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: session } = await (supabase as any)
+      .from('coach_sessions')
       .select('messages')
       .eq('id', session_id)
       .eq('user_id', user.id)
@@ -68,11 +70,13 @@ export async function POST(req: NextRequest) {
   sessionMessages.push({ role: 'assistant', content: reply })
 
   if (sessionDbId) {
-    await supabase.from('coach_sessions' as never)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any).from('coach_sessions')
       .update({ messages: sessionMessages, updated_at: new Date().toISOString() })
       .eq('id', sessionDbId)
   } else {
-    const { data: newSession } = await supabase.from('coach_sessions' as never)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: newSession } = await (supabase as any).from('coach_sessions')
       .insert({ user_id: user.id, messages: sessionMessages, mood_score: mood_score ?? null })
       .select('id').single()
     sessionDbId = (newSession as { id: string } | null)?.id

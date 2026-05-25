@@ -27,11 +27,13 @@ export async function POST(req: NextRequest) {
 
   const { question, query_embedding } = parsed.data
 
-  const { data: posts } = await supabase.rpc('match_posts' as never, {
+  type MatchedPost = { id: string; title: string; body: string; author_role: string }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: posts } = await (supabase as any).rpc('match_posts', {
     query_embedding,
     match_threshold: 0.75,
     match_count:     4,
-  }) as { data: { id: string; title: string; body: string; author_role: string }[] | null }
+  }) as { data: MatchedPost[] | null }
 
   const context = (posts ?? [])
     .map((p) => `## ${p.title}\n${p.body.slice(0, 600)}`)

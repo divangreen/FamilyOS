@@ -24,7 +24,6 @@ export default async function proxy(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
-          // Stage cookies on the outgoing response (request.cookies is read-only)
           supabaseResponse = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
@@ -40,6 +39,16 @@ export default async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   const { pathname } = request.nextUrl
+
+  // Admin-only routes: require app_metadata.role === 'admin'
+  if (pathname.startsWith('/admin')) {
+    if (!user || user.app_metadata?.role !== 'admin') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      return NextResponse.redirect(url)
+    }
+    return supabaseResponse
+  }
 
   const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix))
   const isAuthPage = AUTH_PAGES.some((page) => pathname.startsWith(page))

@@ -47,7 +47,8 @@ export async function POST(req: NextRequest) {
     user_id: user.id, input: d, output: routine, updated_at: new Date().toISOString(),
   })
 
-  await supabase.rpc('increment_ai_usage' as never, { p_user_id: user.id, p_feature: 'routine' })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (supabase as any).rpc('increment_ai_usage', { p_user_id: user.id, p_feature: 'routine' })
 
   return NextResponse.json({ routine })
 }

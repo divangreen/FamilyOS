@@ -80,7 +80,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Analysis failed — please try again' }, { status: 500 })
   }
 
-  await supabase.rpc('increment_ai_usage' as never, { p_user_id: user.id, p_feature: 'cry' })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (supabase as any).rpc('increment_ai_usage', { p_user_id: user.id, p_feature: 'cry' })
 
   return NextResponse.json({
     ...result,

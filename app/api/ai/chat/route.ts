@@ -78,7 +78,8 @@ export async function POST(req: NextRequest) {
     sessionDbId = (newSession as { id: string } | null)?.id
   }
 
-  await supabase.rpc('increment_ai_usage' as never, { p_user_id: user.id, p_feature: 'coach' })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (supabase as any).rpc('increment_ai_usage', { p_user_id: user.id, p_feature: 'coach' })
 
   return NextResponse.json({ reply, session_id: sessionDbId })
 }

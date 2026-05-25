@@ -50,7 +50,8 @@ export async function POST(req: NextRequest) {
   })
 
   const answer = extractText(response)
-  await supabase.rpc('increment_ai_usage' as never, { p_user_id: user.id, p_feature: 'ask' })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (supabase as any).rpc('increment_ai_usage', { p_user_id: user.id, p_feature: 'ask' })
 
   return NextResponse.json({
     answer,

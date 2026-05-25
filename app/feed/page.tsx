@@ -21,6 +21,7 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
   const role       = (typeof params.role       === 'string' ? params.role       : null) as UserRole | null
   const sort       =  typeof params.sort       === 'string' ? params.sort       : 'recent'
   const subVillage =  typeof params.subVillage === 'string' ? params.subVillage : null
+  const q           = typeof params.q === 'string' ? params.q : null
   const page       =  Math.max(0, parseInt(typeof params.page === 'string' ? params.page : '0', 10))
 
   // Derive user initials for compose bar avatar
@@ -40,6 +41,11 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 
   // Query public_posts view — never the raw posts table
   let query = supabase.from('public_posts').select('*', { count: 'exact' })
+
+  // Apply search if present
+  if (q && q.trim().length >= 2) {
+    query = query.textSearch('search_vector', q.trim(), { type: 'websearch', config: 'english' })
+  }
 
   if (role && role !== ('all' as string)) {
     query = query.eq('role', role).eq('is_ghost_post', false)

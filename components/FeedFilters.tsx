@@ -1,5 +1,6 @@
-'use client'
+"use client"
 
+import React, { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { type UserRole } from '@/lib/supabase/types'
@@ -37,6 +38,10 @@ export function FeedFilters({ subVillages = [] }: FeedFiltersProps) {
   const searchParams = useSearchParams()
   const pathname = usePathname()
 
+  const qParam = searchParams.get('q') || ''
+  const [searchValue, setSearchValue] = useState(qParam)
+  const debounceRef = useRef<number | null>(null)
+
   const activeRole     = (searchParams.get('role') as UserRole | null) || 'all'
   const activeSort     = searchParams.get('sort') || 'recent'
   const activeVillage  = searchParams.get('subVillage') || 'all'
@@ -52,8 +57,39 @@ export function FeedFilters({ subVillages = [] }: FeedFiltersProps) {
     router.push(`${pathname}?${params.toString()}`)
   }
 
+  // Debounced update of 'q' param
+  useEffect(() => {
+    if (debounceRef.current) window.clearTimeout(debounceRef.current)
+    debounceRef.current = window.setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString())
+      if (!searchValue) {
+        params.delete('q')
+      } else {
+        params.set('q', searchValue)
+      }
+      params.delete('page')
+      router.push(`${pathname}?${params.toString()}`)
+    }, 400)
+
+    return () => {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current)
+    }
+  }, [searchValue])
+
+
   return (
     <div className="ui-sans space-y-2 py-3">
+      {/* Search input */}
+      <div>
+        <input
+          aria-label="Search posts"
+          type="search"
+          placeholder="Search the village..."
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm"
+        />
+      </div>
       {/* Role + Sort row */}
       <div className="flex gap-2 flex-wrap items-center">
         {/* Role pills */}

@@ -47,6 +47,9 @@ export function PostCard({ post }: PostCardProps) {
   const [helpfulCount, setHelpfulCount] = useState(post.helpful_count)
   const [voted, setVoted] = useState(false)
   const [voting, setVoting] = useState(false)
+  const [popularCount, setPopularCount] = useState(post.popular_count ?? 0)
+  const [popularVoted, setPopularVoted] = useState(false)
+  const [popularVoting, setPopularVoting] = useState(false)
 
   const authorName = post.is_ghost_post
     ? (post.alias_name ?? 'Anonymous')
@@ -79,6 +82,33 @@ export function PostCard({ post }: PostCardProps) {
       setHelpfulCount((n) => n + (optimistic ? -1 : 1))
     } finally {
       setVoting(false)
+    }
+  }
+
+  async function handlePopular(e: React.MouseEvent) {
+    e.preventDefault()
+    if (popularVoting) return
+    setPopularVoting(true)
+
+    const optimistic = !popularVoted
+    setPopularVoted(optimistic)
+    setPopularCount((n) => n + (optimistic ? 1 : -1))
+
+    try {
+      const res = await fetch('/api/votes/popular', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ post_id: post.id }),
+      })
+      if (!res.ok) {
+        setPopularVoted(!optimistic)
+        setPopularCount((n) => n + (optimistic ? -1 : 1))
+      }
+    } catch {
+      setPopularVoted(!optimistic)
+      setPopularCount((n) => n + (optimistic ? -1 : 1))
+    } finally {
+      setPopularVoting(false)
     }
   }
 
@@ -185,6 +215,25 @@ export function PostCard({ post }: PostCardProps) {
             {voted ? '♥' : '♡'}
           </span>
           <span>{helpfulCount}</span>
+        </button>
+
+        {/* Popular vote (star) */}
+        <button
+          onClick={handlePopular}
+          disabled={popularVoting}
+          aria-label={`Mark post popular. ${popularCount} popular votes.`}
+          aria-pressed={popularVoted}
+          className={cn(
+            'flex items-center gap-1 rounded px-1.5 py-0.5 transition-colors',
+            'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600',
+            popularVoted ? 'text-amber-700' : 'hover:text-amber-600',
+            popularVoting && 'opacity-50 cursor-not-allowed'
+          )}
+        >
+          <span aria-hidden="true" className="text-sm leading-none">
+            {popularVoted ? '★' : '☆'}
+          </span>
+          <span>{popularCount}</span>
         </button>
 
         <Link

@@ -313,6 +313,75 @@ export type Database = {
           }
         ]
       }
+      coach_sessions: {
+        Row: {
+          id:         string
+          user_id:    string
+          messages:   { role: string; content: string }[]
+          mood_score: number | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?:         string | undefined
+          user_id:    string
+          messages?:  { role: string; content: string }[] | undefined
+          mood_score?: number | null | undefined
+          created_at?: string | undefined
+          updated_at?: string | undefined
+        }
+        Update: {
+          id?:         string | undefined
+          user_id?:    string | undefined
+          messages?:   { role: string; content: string }[] | undefined
+          mood_score?: number | null | undefined
+          created_at?: string | undefined
+          updated_at?: string | undefined
+        }
+        Relationships: []
+      }
+      ai_usage: {
+        Row: {
+          user_id:  string
+          feature:  string
+          used_at:  string
+          count:    number
+        }
+        Insert: {
+          user_id:  string
+          feature:  string
+          used_at?: string | undefined
+          count?:   number | undefined
+        }
+        Update: {
+          user_id?: string | undefined
+          feature?: string | undefined
+          used_at?: string | undefined
+          count?:   number | undefined
+        }
+        Relationships: []
+      }
+      saved_routines: {
+        Row: {
+          user_id:    string
+          input:      Record<string, unknown> | null
+          output:     string | null
+          updated_at: string | null
+        }
+        Insert: {
+          user_id:    string
+          input?:     Record<string, unknown> | null | undefined
+          output?:    string | null | undefined
+          updated_at?: string | null | undefined
+        }
+        Update: {
+          user_id?:   string | undefined
+          input?:     Record<string, unknown> | null | undefined
+          output?:    string | null | undefined
+          updated_at?: string | null | undefined
+        }
+        Relationships: []
+      }
     }
     Views: {
       public_posts: {
@@ -345,6 +414,43 @@ export type Database = {
           p_delta: number
         }
         Returns: undefined
+      }
+      increment_popular_count: {
+        Args: { post_id: string }
+        Returns: undefined
+      }
+      decrement_popular_count: {
+        Args: { post_id: string }
+        Returns: undefined
+      }
+      create_notification: {
+        Args: {
+          p_post_id: string
+          p_type: NotificationType
+          p_actor_id: string
+        }
+        Returns: undefined
+      }
+      increment_ai_usage: {
+        Args: {
+          p_user_id: string
+          p_feature:  string
+        }
+        Returns: undefined
+      }
+      match_posts: {
+        Args: {
+          query_embedding: number[]
+          match_threshold: number
+          match_count:     number
+        }
+        Returns: {
+          id:          string
+          title:       string
+          body:        string
+          author_role: string
+          similarity:  number
+        }[]
       }
     }
     Enums: {

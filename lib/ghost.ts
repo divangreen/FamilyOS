@@ -8,28 +8,35 @@ function generateAliasName(): string {
   return `${adj}${animal}${num}`
 }
 
+const MAX_ATTEMPTS = 5
+
 export async function createGhostAlias(userId: string): Promise<string> {
   const supabase = await createClient()
 
-  let aliasName: string
-  let attempts = 0
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    // Exponential backoff: skip delay on first attempt
+    if (attempt > 0) {
+      await new Promise<void>((resolve) =>
+        setTimeout(resolve, 50 * Math.pow(2, attempt)),
+      )
+    }
 
-  // Retry up to 5 times to get a unique alias
-  do {
-    aliasName = generateAliasName()
-    attempts++
+    const aliasName = generateAliasName()
 
     const { error } = await supabase
       .from('ghost_aliases')
-      .insert({ user_id: userId, alias_name: aliasName } as any)
+      .insert({ user_id: userId, alias_name: aliasName })
 
     if (!error) return aliasName
 
-    // Unique constraint violation — try again
+    // Unique constraint violation — retry with a new name
     if (error.code !== '23505') throw error
-  } while (attempts < 5)
+  }
 
-  throw new Error('Failed to generate unique ghost alias after 5 attempts')
+  throw new Error(
+    `Failed to generate a unique ghost alias after ${MAX_ATTEMPTS} attempts. ` +
+    'The alias pool may be exhausted — please contact support.',
+  )
 }
 
 export async function getOrCreateGhostAlias(userId: string): Promise<{ id: string; alias_name: string }> {

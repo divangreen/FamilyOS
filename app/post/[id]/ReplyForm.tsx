@@ -10,9 +10,10 @@ interface ReplyFormProps {
   postId: string
   userId: string
   parentId?: string
+  depth?: number
 }
 
-export function ReplyForm({ postId, userId, parentId }: ReplyFormProps) {
+export function ReplyForm({ postId, userId, parentId, depth = 0 }: ReplyFormProps) {
   const router = useRouter()
   const [body, setBody] = useState('')
   const [isGhost, setIsGhost] = useState(false)
@@ -45,6 +46,12 @@ export function ReplyForm({ postId, userId, parentId }: ReplyFormProps) {
     e.preventDefault()
     if (!body.trim()) return
 
+    // DB enforces depth BETWEEN 0 AND 5 — guard on the client too
+    if (depth >= 5) {
+      setError('Replies cannot be nested more than 5 levels deep.')
+      return
+    }
+
     setSubmitting(true)
     setError(null)
 
@@ -58,7 +65,7 @@ export function ReplyForm({ postId, userId, parentId }: ReplyFormProps) {
           author_id: userId,
           parent_id: parentId ?? null,
           body: body.trim(),
-          depth: parentId ? 1 : 0,
+          depth,
           is_ghost_post: isGhost,
           ghost_alias_id: isGhost ? ghostAliasId : null,
         } as Database['public']['Tables']['comments']['Insert'],
@@ -75,6 +82,17 @@ export function ReplyForm({ postId, userId, parentId }: ReplyFormProps) {
     setGhostAliasId(null)
     router.refresh()
     setSubmitting(false)
+
+    // Fire-and-forget notification create via server-side RPC
+    try {
+      await fetch('/api/notifications/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId }),
+      })
+    } catch (err) {
+      console.error('Failed to request notification creation:', err)
+    }
   }
 
   return (

@@ -11,11 +11,13 @@ export async function POST(req: NextRequest) {
   const supabase = await createClient()
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
 
-  const { data: posts } = await supabase
+  type RankPost = { id: string; title: string; body: string | null; helpful_count: number; popular_count: number }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: posts } = await (supabase as any)
     .from('posts')
     .select('id, title, body, helpful_count, popular_count')
     .gte('created_at', since)
-    .limit(50)
+    .limit(50) as { data: RankPost[] | null }
 
   if (!posts?.length) return NextResponse.json({ scored: 0 })
 
@@ -42,7 +44,8 @@ export async function POST(req: NextRequest) {
     for (const { idx, score } of scores) {
       const post = batch[idx]
       if (!post) continue
-      await supabase.from('posts').update({ ai_rank_score: score }).eq('id', post.id)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any).from('posts').update({ ai_rank_score: score }).eq('id', post.id)
       scored++
     }
   }

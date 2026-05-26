@@ -3,7 +3,13 @@
     "allow": [
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'fix: cast supabase as any for match_posts RPC to fix TS build error *)",
+      "Bash(git commit -m 'fix: replace '\\\\''as never'\\\\'' RPC casts with \\(supabase as any\\).rpc\\(\\) pattern *)",
+      "Bash(cd /d e:\\\\FamilyOS)",
+      "Bash(npm run *)",
+      "Bash(Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue)"
     ]
   }
 }

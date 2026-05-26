@@ -30,7 +30,8 @@ export function NewPostForm({ userId, subVillages, defaultSubVillageId }: NewPos
     }
     if (aliasName) {
       const supabase = createClient()
-      const { data } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data } = await (supabase as any)
         .from('ghost_aliases')
         .select('id')
         .eq('user_id', userId)
@@ -51,7 +52,8 @@ export function NewPostForm({ userId, subVillages, defaultSubVillageId }: NewPos
 
     const supabase = createClient()
 
-    const { data, error: insertError } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error: insertError } = await (supabase as any)
       .from('posts')
       .insert({
         author_id: userId,

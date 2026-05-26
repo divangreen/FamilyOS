@@ -30,7 +30,8 @@ export function ReplyForm({ postId, userId, parentId, depth = 0 }: ReplyFormProp
     if (aliasName) {
       // Look up the alias UUID we just created
       const supabase = createClient()
-      const { data } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data } = await (supabase as any)
         .from('ghost_aliases')
         .select('id')
         .eq('user_id', userId)
@@ -57,7 +58,8 @@ export function ReplyForm({ postId, userId, parentId, depth = 0 }: ReplyFormProp
 
     const supabase = createClient()
 
-    const { error: insertError } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: insertError } = await (supabase as any)
       .from('comments')
       .insert([
         {

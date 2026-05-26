@@ -1,49 +1,56 @@
-import { createClient } from '@/lib/supabase/server';
-import { notFound } from 'next/navigation';
-import { EditProfileForm } from './EditProfileForm';
-import { PostHistory } from './PostHistory';
+import { createClient } from '@/lib/supabase/server'
+import type { PublicPost } from '@/lib/supabase/types'
+import { notFound } from 'next/navigation'
+import { EditProfileForm } from './EditProfileForm'
+import { PostHistory } from './PostHistory'
 
-export default async function ProfilePage({ 
-  params 
-}: { 
-  params: { userId: string } 
+type Profile = {
+  id: string
+  display_name: string | null
+  bio: string | null
+  avatar_url: string | null
+  expert_verified: boolean | null
+  created_at: string
+}
+
+export default async function ProfilePage({
+  params
+}: {
+  params: { userId: string }
 }) {
-  const supabase = await createClient();
-  
-  // Get current user
-  const { data: { user } } = await supabase.auth.getUser();
-  const isOwnProfile = user?.id === params.userId;
+  const supabase = await createClient()
 
-  // Get profile data
-  const { data: profile, error } = await supabase
+  const { data: { user } } = await supabase.auth.getUser()
+  const isOwnProfile = user?.id === params.userId
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: profile, error } = await (supabase as any)
     .from('profiles')
     .select('*')
     .eq('id', params.userId)
-    .single();
+    .single() as { data: Profile | null; error: unknown }
 
   if (error || !profile) {
-    notFound();
+    notFound()
   }
 
-  // Get user's posts (non-ghost only for privacy)
-  const { data: posts } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: posts } = await (supabase as any)
     .from('public_posts')
     .select('*')
     .eq('author_id', params.userId)
     .eq('is_ghost_post', false)
     .order('created_at', { ascending: false })
-    .limit(20);
+    .limit(20) as { data: PublicPost[] | null }
 
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4">
-      {/* Profile Header */}
       <div className="bg-white rounded-lg shadow p-6 mb-6">
         <div className="flex items-start gap-6">
-          {/* Avatar */}
           <div className="flex-shrink-0">
             {profile.avatar_url ? (
-              <img 
-                src={profile.avatar_url} 
+              <img
+                src={profile.avatar_url}
                 alt={profile.display_name || 'User avatar'}
                 className="w-24 h-24 rounded-full object-cover"
               />
@@ -56,7 +63,6 @@ export default async function ProfilePage({
             )}
           </div>
 
-          {/* Info */}
           <div className="flex-1">
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold">
@@ -68,7 +74,7 @@ export default async function ProfilePage({
                 </span>
               )}
             </div>
-            
+
             {profile.bio && (
               <p className="text-gray-600 mt-2">{profile.bio}</p>
             )}
@@ -81,11 +87,9 @@ export default async function ProfilePage({
         </div>
       </div>
 
-      {/* Edit Form (only for own profile) */}
       {isOwnProfile && <EditProfileForm profile={profile} />}
 
-      {/* Post History */}
       <PostHistory posts={posts || []} />
     </div>
-  );
+  )
 }

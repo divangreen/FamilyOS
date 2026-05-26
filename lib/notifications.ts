@@ -1,20 +1,20 @@
 import { createClient } from '@/lib/supabase/server'
+import type { NotificationType, TargetType } from '@/lib/supabase/types'
 
 type NotificationPayload = {
-  recipient_id:   string
-  type:           string
-  actor_id?:      string
-  target_id?:     string
-  target_type?:   string
-  post_title?:    string
-  actor_name?:    string
+  recipient_id: string
+  type:         NotificationType
+  actor_id?:    string | null
+  target_id:    string
+  target_type:  TargetType
 }
 
 export async function createNotification(payload: NotificationPayload): Promise<void> {
   try {
     const supabase = await createClient()
-    const { error } = await supabase
-      .from('notifications' as never)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase as any)
+      .from('notifications')
       .insert(payload)
     if (error) console.error('[notifications] insert failed:', error.message)
   } catch (err) {

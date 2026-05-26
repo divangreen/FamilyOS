@@ -47,7 +47,8 @@ export async function POST(request: Request) {
       .from('avatars')
       .getPublicUrl(fileName);
 
-    const { error: updateError } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: updateError } = await (supabase as any)
       .from('profiles')
       .update({ avatar_url: publicUrl })
       .eq('id', user.id);

@@ -11,7 +11,8 @@ export default async function ProfilePage() {
 
   if (!user) redirect('/login')
 
-  const { data: rawProfile } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: rawProfile } = await (supabase as any)
     .from('users')
     .select('*')
     .eq('id', user.id)

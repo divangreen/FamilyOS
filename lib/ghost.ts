@@ -12,9 +12,10 @@ const MAX_ATTEMPTS = 5
 
 export async function createGhostAlias(userId: string): Promise<string> {
   const supabase = await createClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const db = supabase as any
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    // Exponential backoff: skip delay on first attempt
     if (attempt > 0) {
       await new Promise<void>((resolve) =>
         setTimeout(resolve, 50 * Math.pow(2, attempt)),
@@ -23,7 +24,7 @@ export async function createGhostAlias(userId: string): Promise<string> {
 
     const aliasName = generateAliasName()
 
-    const { error } = await supabase
+    const { error } = await db
       .from('ghost_aliases')
       .insert({ user_id: userId, alias_name: aliasName })
 
@@ -41,26 +42,27 @@ export async function createGhostAlias(userId: string): Promise<string> {
 
 export async function getOrCreateGhostAlias(userId: string): Promise<{ id: string; alias_name: string }> {
   const supabase = await createClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const db = supabase as any
 
-  // Check for a recent alias (reuse within same session is fine)
-  const { data: existing } = await supabase
+  const { data: existing } = await db
     .from('ghost_aliases')
     .select('id, alias_name')
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
     .limit(1)
-    .single()
+    .single() as { data: { id: string; alias_name: string } | null }
 
   if (existing) return existing
 
   const alias_name = await createGhostAlias(userId)
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('ghost_aliases')
     .select('id, alias_name')
     .eq('user_id', userId)
     .eq('alias_name', alias_name)
-    .single()
+    .single() as { data: { id: string; alias_name: string } | null; error: unknown }
 
   if (error || !data) throw new Error('Failed to fetch new ghost alias')
   return data

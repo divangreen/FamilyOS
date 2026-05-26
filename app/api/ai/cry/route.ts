@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   const monthStart = new Date()
   monthStart.setDate(1)
   const { count } = await supabase
-    .from('ai_usage' as never)
+    .from('ai_usage')
     .select('*', { count: 'exact', head: true })
     .eq('user_id', user.id)
     .eq('feature', 'cry')

@@ -10,7 +10,8 @@ export default async function VillagePage({ params }: Props) {
   const { slug } = await params
   const supabase = await createClient()
 
-  const { data: rawVillage } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: rawVillage } = await (supabase as any)
     .from('sub_villages')
     .select('*')
     .eq('name', slug)

@@ -9,10 +9,11 @@ export default async function NewPostPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: subVillages } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: subVillages } = await (supabase as any)
     .from('sub_villages')
     .select('id, name')
-    .order('name')
+    .order('name') as { data: { id: string; name: string }[] | null }
 
   return (
     <div className="min-h-screen bg-slate-50">

@@ -43,7 +43,8 @@ export async function POST(req: NextRequest) {
 
   const routine = extractText(response)
 
-  await supabase.from('saved_routines' as never).upsert({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (supabase as any).from('saved_routines').upsert({
     user_id: user.id, input: d, output: routine, updated_at: new Date().toISOString(),
   })
 

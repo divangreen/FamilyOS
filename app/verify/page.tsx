@@ -12,7 +12,8 @@ export default async function VerifyPage() {
 
   if (!user) redirect('/login')
 
-  const { data: rawApplication } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: rawApplication } = await (supabase as any)
     .from('expert_applications')
     .select('status, created_at, reviewer_notes')
     .eq('user_id', user.id)

@@ -33,14 +33,17 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
     .join('')
     .toUpperCase() || '?'
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const db = supabase as any
+
   // Fetch sub-villages for filter
-  const { data: subVillages } = await supabase
+  const { data: subVillages } = await db
     .from('sub_villages')
     .select('id, name')
-    .order('name')
+    .order('name') as { data: { id: string; name: string }[] | null }
 
   // Query public_posts view — never the raw posts table
-  let query = supabase.from('public_posts').select('*', { count: 'exact' })
+  let query = db.from('public_posts').select('*', { count: 'exact' })
 
   // Apply search if present
   if (q && q.trim().length >= 2) {
@@ -63,7 +66,7 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 
   query = query.range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
 
-  const { data: posts, count, error } = await query
+  const { data: posts, count, error } = await query as { data: PublicPost[] | null; count: number | null; error: { message: string } | null }
 
   return (
     <div className="min-h-screen bg-slate-50">

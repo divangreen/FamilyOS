@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { FeedQuerySchema } from '@/lib/validators/feed'
 import { decodeCursor, encodeCursor } from '@/lib/pagination'
+import type { PublicPost } from '@/lib/supabase/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,7 +30,8 @@ export async function GET(request: Request) {
 
     const supabase = await createClient()
 
-    let query = supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let query = (supabase as any)
       .from('public_posts')
       .select('*')
 
@@ -89,7 +91,7 @@ export async function GET(request: Request) {
     // Fetch one extra row to determine hasNextPage
     query = query.limit(limit + 1)
 
-    const { data, error } = await query
+    const { data, error } = await query as { data: PublicPost[] | null; error: { message: string } | null }
 
     if (error) {
       console.error('Feed query error:', error)

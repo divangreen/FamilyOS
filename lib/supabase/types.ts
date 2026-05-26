@@ -106,6 +106,7 @@ export type Database = {
           ghost_alias_id: string | null
           helpful_count: number
           popular_count: number
+          ai_rank_score: number | null
           created_at: string
           updated_at: string
         }
@@ -119,6 +120,7 @@ export type Database = {
           ghost_alias_id?: string | null | undefined
           helpful_count?: number | undefined
           popular_count?: number | undefined
+          ai_rank_score?: number | null | undefined
           created_at?: string | undefined
           updated_at?: string | undefined
         }
@@ -132,6 +134,7 @@ export type Database = {
           ghost_alias_id?: string | null | undefined
           helpful_count?: number | undefined
           popular_count?: number | undefined
+          ai_rank_score?: number | null | undefined
           created_at?: string | undefined
           updated_at?: string | undefined
         }

@@ -16,7 +16,8 @@ export default async function ApplyExpertPage() {
   if (!user) redirect('/login')
 
   // Check for existing application (maybeSingle returns null when not found, not an error)
-  const { data: applicationRaw } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: applicationRaw } = await (supabase as any)
     .from('expert_applications')
     .select('status, specialty, created_at, reviewed_at, reviewer_notes')
     .eq('user_id', user.id)

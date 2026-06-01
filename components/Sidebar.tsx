@@ -1,30 +1,110 @@
 'use client'
 
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { Star, MessageSquare, Sparkles } from 'lucide-react'
 
-/** Placeholder expert data — wire to real Supabase query when available */
-const PLACEHOLDER_EXPERTS = [
-  { name: 'Dr. Sarah M.', specialty: 'Pediatrics' },
-  { name: 'James T.',     specialty: 'Child Psychology' },
-  { name: 'Ana R.',       specialty: 'Nutrition' },
-]
-
-function expertInitials(name: string): string {
-  return name
-    .split(' ')
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase()
+interface SubVillageStat {
+  id:        string
+  name:      string
+  postCount: number
 }
 
-export default function Sidebar() {
+interface TrendingPost {
+  id:            string
+  title:         string
+  popular_count: number
+}
+
+interface SidebarProps {
+  subVillages?:   SubVillageStat[]
+  trendingPosts?: TrendingPost[]
+}
+
+export default function Sidebar({ subVillages = [], trendingPosts = [] }: SidebarProps) {
   const router = useRouter()
 
   return (
     <div className="flex flex-col gap-4 ui-sans">
 
-      {/* Ghost post callout — encourages anonymous sharing */}
+      {/* Ask an Expert CTA */}
+      <div className="bg-emerald-800 rounded-2xl p-4 text-white">
+        <div className="flex items-center gap-2 mb-2">
+          <Sparkles className="h-4 w-4 text-emerald-300" />
+          <h3 className="text-sm font-semibold">Ask an Expert</h3>
+        </div>
+        <p className="text-xs text-emerald-100 leading-relaxed mb-3">
+          Get answers grounded in posts from verified experts on this platform.
+        </p>
+        <button
+          onClick={() => router.push('/ask')}
+          className="text-xs bg-white text-emerald-800 font-semibold px-3 py-1.5 rounded-full hover:bg-emerald-50 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-300"
+        >
+          Ask a question →
+        </button>
+      </div>
+
+      {/* Browse Topics */}
+      {subVillages.length > 0 && (
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-4">
+          <h3 className="text-xs uppercase tracking-widest text-slate-400 font-medium mb-3">
+            Browse Topics
+          </h3>
+          {subVillages.slice(0, 5).map((sv) => (
+            <Link
+              key={sv.id}
+              href={`/feed?subVillage=${sv.id}`}
+              className="flex items-center justify-between mb-2 last:mb-0 group"
+            >
+              <div className="flex items-center gap-1.5 min-w-0">
+                <MessageSquare className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                <span className="text-xs text-slate-700 dark:text-slate-300 truncate group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                  {sv.name}
+                </span>
+              </div>
+              <span className="text-xs text-slate-400 shrink-0 ml-2">{sv.postCount}</span>
+            </Link>
+          ))}
+          <Link
+            href="/topics"
+            className="block text-xs text-emerald-700 dark:text-emerald-400 hover:underline mt-3"
+          >
+            Browse all topics →
+          </Link>
+        </div>
+      )}
+
+      {/* Trending Posts */}
+      {trendingPosts.length > 0 && (
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-4">
+          <h3 className="text-xs uppercase tracking-widest text-slate-400 font-medium mb-3">
+            Trending Posts
+          </h3>
+          {trendingPosts.map((post) => (
+            <Link
+              key={post.id}
+              href={`/post/${post.id}`}
+              className="flex items-start gap-2 mb-3 last:mb-0 group"
+            >
+              <Star className="h-3.5 w-3.5 text-amber-400 shrink-0 mt-0.5" />
+              <div className="min-w-0">
+                <p className="text-xs text-slate-700 dark:text-slate-300 leading-snug group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors line-clamp-2">
+                  {post.title}
+                </p>
+                <p className="text-xs text-slate-400 mt-0.5">{post.popular_count} ★</p>
+              </div>
+            </Link>
+          ))}
+          <Link
+            href="/feed?sort=popular"
+            className="block text-xs text-emerald-700 dark:text-emerald-400 hover:underline mt-1"
+          >
+            See all popular posts →
+          </Link>
+        </div>
+      )}
+
+      {/* Ghost post callout */}
       <div className="bg-violet-900 rounded-2xl p-4 text-white">
         <p className="text-sm font-serif leading-relaxed mb-3 text-violet-100">
           Some things are too personal to share under your name.
@@ -35,48 +115,6 @@ export default function Sidebar() {
         >
           Try ghost posting
         </button>
-      </div>
-
-      {/* Verified experts panel */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-4">
-        <h3 className="text-xs uppercase tracking-widest text-slate-400 font-medium mb-3 ui-sans">
-          Verified Experts
-        </h3>
-        {PLACEHOLDER_EXPERTS.map((e) => (
-          <div key={e.name} className="flex items-center gap-2 mb-2 last:mb-0">
-            {/* Expert avatar */}
-            <div className="w-7 h-7 rounded-full bg-emerald-800 text-white text-xs flex items-center justify-center font-bold shrink-0">
-              {expertInitials(e.name)}
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-medium text-slate-900 truncate">{e.name}</p>
-              <p className="text-xs text-slate-500 truncate">{e.specialty}</p>
-            </div>
-            {/* Online indicator dot */}
-            <span className="ml-auto w-2 h-2 rounded-full bg-emerald-500 shrink-0" aria-hidden="true" />
-          </div>
-        ))}
-      </div>
-
-      {/* Village activity — placeholder stats, wire to real data later */}
-      <div className="bg-slate-800 rounded-2xl p-4 text-white">
-        <h3 className="text-xs uppercase tracking-widest text-slate-400 font-medium mb-2 ui-sans">
-          Village Activity
-        </h3>
-        <p className="text-3xl font-bold text-amber-400">47</p>
-        <p className="text-xs text-slate-400 mb-3">parents online now</p>
-
-        {/* Segmented role breakdown bar */}
-        <div className="flex rounded-full overflow-hidden h-2 mb-2" role="img" aria-label="Role breakdown: 45% Moms, 35% Dads, 20% Guardians">
-          <div className="bg-rose-400" style={{ width: '45%' }} />
-          <div className="bg-sky-400" style={{ width: '35%' }} />
-          <div className="bg-violet-400" style={{ width: '20%' }} />
-        </div>
-        <div className="flex gap-3 flex-wrap">
-          <span className="text-xs text-slate-400">● Moms 45%</span>
-          <span className="text-xs text-slate-400">● Dads 35%</span>
-          <span className="text-xs text-slate-400">● Guardians 20%</span>
-        </div>
       </div>
 
     </div>

@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 import { FeedFilters } from '@/components/FeedFilters'
 import { PostCard } from '@/components/PostCard'
 import Sidebar from '@/components/Sidebar'
+import { NewHereBanner } from '@/components/NewHereBanner'
 import type { UserRole, PublicPost } from '@/lib/supabase/types'
 
 const PAGE_SIZE = 20
@@ -21,10 +22,9 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
   const role       = (typeof params.role       === 'string' ? params.role       : null) as UserRole | null
   const sort       =  typeof params.sort       === 'string' ? params.sort       : 'recent'
   const subVillage =  typeof params.subVillage === 'string' ? params.subVillage : null
-  const q           = typeof params.q === 'string' ? params.q : null
+  const q          =  typeof params.q          === 'string' ? params.q          : null
   const page       =  Math.max(0, parseInt(typeof params.page === 'string' ? params.page : '0', 10))
 
-  // Derive user initials for compose bar avatar
   const displayName: string = (user?.user_metadata?.display_name as string | undefined) ?? ''
   const userInitials = displayName
     .split(' ')
@@ -36,20 +36,45 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
 
-  // Fetch sub-villages for filter
+  // Fetch sub-villages for filters + sidebar
   const { data: subVillages } = await db
     .from('sub_villages')
     .select('id, name')
     .order('name') as { data: { id: string; name: string }[] | null }
 
-  // Query public_posts view — never the raw posts table
+  // Build sub-village ID map for NewHereBanner (name → id)
+  const subVillageIdMap: Record<string, string> = {}
+  for (const sv of subVillages ?? []) {
+    subVillageIdMap[sv.name] = sv.id
+  }
+
+  // Fetch all post sub_village_ids to compute per-topic counts for Sidebar
+  const { data: allPostIds } = await db
+    .from('public_posts')
+    .select('sub_village_id') as { data: { sub_village_id: string }[] | null }
+
+  const countMap = new Map<string, number>()
+  for (const p of allPostIds ?? []) {
+    countMap.set(p.sub_village_id, (countMap.get(p.sub_village_id) ?? 0) + 1)
+  }
+
+  const subVillageSidebar = (subVillages ?? [])
+    .map((sv) => ({ id: sv.id, name: sv.name, postCount: countMap.get(sv.id) ?? 0 }))
+    .sort((a, b) => b.postCount - a.postCount)
+
+  // Fetch top 3 trending posts for Sidebar
+  const { data: trendingPosts } = await db
+    .from('public_posts')
+    .select('id, title, popular_count')
+    .order('popular_count', { ascending: false })
+    .limit(3) as { data: { id: string; title: string; popular_count: number }[] | null }
+
+  // Build feed query
   let query = db.from('public_posts').select('*', { count: 'exact' })
 
-  // Apply search if present
   if (q && q.trim().length >= 2) {
     query = query.textSearch('search_vector', q.trim(), { type: 'websearch', config: 'english' })
   }
-
   if (role && role !== ('all' as string)) {
     query = query.eq('role', role).eq('is_ghost_post', false)
   }
@@ -66,7 +91,11 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 
   query = query.range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
 
-  const { data: posts, count, error } = await query as { data: PublicPost[] | null; count: number | null; error: { message: string } | null }
+  const { data: posts, count, error } = await query as {
+    data:  PublicPost[] | null
+    count: number | null
+    error: { message: string } | null
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -74,16 +103,33 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
       {/* Sticky header */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-20">
         <div className="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
-          <div>
-            <h1
-              className="text-2xl font-bold text-slate-900 leading-tight"
-              style={{ fontFamily: 'Georgia, serif' }}
-            >
-              The Village
-            </h1>
-            <p className="text-slate-500 text-xs tracking-widest uppercase ui-sans">
-              A space for parents
-            </p>
+          <div className="flex items-center gap-6">
+            <div>
+              <h1
+                className="text-2xl font-bold text-slate-900 leading-tight"
+                style={{ fontFamily: 'Georgia, serif' }}
+              >
+                The Village
+              </h1>
+              <p className="text-slate-500 text-xs tracking-widest uppercase ui-sans">
+                A space for parents
+              </p>
+            </div>
+            {/* Top-level nav links */}
+            <nav className="hidden md:flex items-center gap-4 text-sm ui-sans" aria-label="Site navigation">
+              <Link
+                href="/topics"
+                className="text-slate-500 hover:text-emerald-800 transition-colors"
+              >
+                Browse Topics
+              </Link>
+              <Link
+                href="/ask"
+                className="text-slate-500 hover:text-emerald-800 transition-colors"
+              >
+                Ask an Expert
+              </Link>
+            </nav>
           </div>
 
           <nav className="flex gap-2" aria-label="User actions">
@@ -91,7 +137,7 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
               <>
                 <Link
                   href="/apply-expert"
-                  className="px-3 py-1.5 border border-emerald-800 text-emerald-800 bg-transparent hover:bg-emerald-50 rounded-lg transition text-sm ui-sans focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600"
+                  className="hidden sm:inline-flex px-3 py-1.5 border border-emerald-800 text-emerald-800 bg-transparent hover:bg-emerald-50 rounded-lg transition text-sm ui-sans focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600"
                 >
                   Apply as Expert
                 </Link>
@@ -120,6 +166,9 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
         {/* Main feed column */}
         <main className="flex-1 min-w-0">
 
+          {/* New Here? onboarding banner */}
+          <NewHereBanner subVillageIds={subVillageIdMap} />
+
           {/* Compose bar — only shown when logged in */}
           {user && (
             <Link
@@ -127,14 +176,12 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
               className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-xl mb-4 cursor-pointer hover:shadow-md transition-shadow group"
               aria-label="Create a new post"
             >
-              {/* User avatar */}
               <div className="w-8 h-8 rounded-full bg-emerald-800 flex items-center justify-center text-white text-xs font-bold ui-sans shrink-0">
                 {userInitials}
               </div>
               <span className="text-slate-400 text-sm flex-1 font-serif group-hover:text-slate-600 transition-colors">
                 Share something with the village...
               </span>
-              {/* Ghost post hint badge */}
               <span className="text-xs text-violet-700 bg-violet-50 border border-violet-200 px-2 py-1 rounded-full ui-sans shrink-0">
                 ghost post
               </span>
@@ -193,7 +240,10 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 
         {/* Sidebar — hidden on mobile, visible lg+ */}
         <aside className="w-72 shrink-0 hidden lg:block">
-          <Sidebar />
+          <Sidebar
+            subVillages={subVillageSidebar}
+            trendingPosts={trendingPosts ?? []}
+          />
         </aside>
 
       </div>
